@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { useTable } from './TableContext';
 import { TableHeadCell } from './TableHeadCell';
 
 export function TableHead() {
-  const { borderColor, indexCellWidth, fields, rowHeight, totalWidth, resizeable } = useTable();
+  const {
+    borderColor,
+    indexCellWidth,
+    fields,
+    rowHeight,
+    totalWidth,
+    resizeable,
+  } = useTable();
+
   return (
     <View
       style={[
         {
           height: rowHeight,
           width: totalWidth,
-          backgroundColor: "#fff"
+          backgroundColor: '#fff',
         },
       ]}>
       <View
@@ -23,8 +31,7 @@ export function TableHead() {
           borderColor,
           borderBottomWidth: 1,
           width: indexCellWidth,
-        }}>
-      </View>
+        }}></View>
       {fields.map((field, index) => {
         return (
           <TableHeadCell

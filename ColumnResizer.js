@@ -32,8 +32,8 @@ export function ColumnResizer({
   const [panResult, setPanResult] = useState(null);
   const {
     rowHeight,
+    panController,
     fields,
-    socket,
     resizerWidth,
     borderColor,
     highlightBorderColor,
@@ -41,9 +41,20 @@ export function ColumnResizer({
 
   const nextField = fields[index + 1];
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
+  const panResponder = useMemo(() => {
+    return PanResponder.create({
+      onMoveShouldSetPanResponder: (event, gestureState) => {
+        // console.log('resizer onMoveShouldSetPanResponder start');
+        // console.log(
+        //   'resizer onMoveShouldSetPanResponder',
+        //   panController.current
+        // );
+        if (!panController.current) {
+          panController.current = gestureState.stateID;
+          return true;
+        }
+        return panController.current === gestureState.stateID;
+      },
       onPanResponderGrant: () => {
         highlightValue.setValue(1);
         widthValue.setOffset(widthValue._value);
@@ -54,6 +65,8 @@ export function ColumnResizer({
         }
       },
       onPanResponderMove: (event, gestureState) => {
+        // console.log('resizer onPanResponderMove', panController.current);
+
         widthValue.setValue(gestureState.dx);
         rightValue.setValue(gestureState.dx);
         if (nextField) {
@@ -65,13 +78,14 @@ export function ColumnResizer({
         highlightValue.setValue(0);
         widthValue.flattenOffset();
         rightValue.flattenOffset();
+        panController.current = null;
         if (nextField) {
           nextField.widthValue.flattenOffset();
           nextField.leftValue.flattenOffset();
         }
       },
-    })
-  ).current;
+    });
+  }, [highlightValue, nextField, panController, rightValue, widthValue]);
 
   return (
     <Animated.View
@@ -80,10 +94,10 @@ export function ColumnResizer({
         {
           position: 'absolute',
           top: 0,
+          left: rightValue,
           zIndex: 10,
           height: rowHeight,
           width: resizerWidth,
-          left: rightValue,
         },
       ]}>
       <Pressable

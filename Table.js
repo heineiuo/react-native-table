@@ -18,6 +18,37 @@ import { TableContext } from './TableContext';
 import { TableHead } from './TableHead';
 import { TableRow } from './TableRow';
 
+function resetPosition(fields, indexCellWidth, cellWidth, resizerWidth) {
+  let prevRight = indexCellWidth;
+  let width = cellWidth;
+
+  return fields.map((field) => {
+    const left = prevRight;
+    prevRight += width;
+    const leftValue = left;
+    const widthValue = width;
+    const rightValue = prevRight - resizerWidth / 2;
+    const highlightValue = 0;
+    const result = {
+      left,
+      width,
+      ...field,
+    };
+    if (!result.leftValue) {
+      result.leftValue = new Animated.Value(leftValue);
+      result.widthValue = new Animated.Value(widthValue);
+      result.rightValue = new Animated.Value(rightValue);
+      result.highlightValue = new Animated.Value(highlightValue);
+    } else {
+      result.leftValue.setValue(leftValue);
+      result.widthValue.setValue(widthValue);
+      result.rightValue.setValue(rightValue);
+      result.highlightValue.setValue(highlightValue);
+    }
+    return result
+  });
+}
+
 export function Table({
   fields,
   style,
@@ -65,7 +96,7 @@ export function Table({
   /**
    * 序号单元格宽度
    */
-  indexCellWidth?:number,
+  indexCellWidth?: number,
   /**
    * 悬浮行背景颜色
    */
@@ -73,37 +104,54 @@ export function Table({
 }) {
   const [internalFields, dispatch] = useReducer(
     (state, action) => {
+      if (action.type === 'reindex') {
+            console.log(
+          'reindex current state',
+          JSON.stringify(state.map((item) => item.fieldId))
+        );
+
+        const { fromIndex, toIndex } = action.payload;
+        const nextState = state.slice();
+        const target = nextState[fromIndex];
+        nextState.splice(fromIndex, 1);
+        nextState.splice(toIndex, 0, target);
+        console.log(
+          'reindex next state',
+          JSON.stringify(nextState.map((item) => item.fieldId))
+        );
+        // return state;
+        // return nextState;
+        return resetPosition(
+          nextState,
+          indexCellWidth,
+          cellWidth,
+          resizerWidth
+        );
+      }
       return state;
     },
     fields,
     (fields) => {
-      let prevRight = indexCellWidth;
-      let width = cellWidth;
-      return fields.map((field) => {
-        const left = prevRight;
-        prevRight += width;
-        return {
-          leftValue: new Animated.Value(left),
-          widthValue: new Animated.Value(width),
-          rightValue: new Animated.Value(prevRight - resizerWidth / 2),
-          highlightValue: new Animated.Value(0),
-          left,
-          width,
-          ...field,
-        };
-      });
+      return resetPosition(fields, indexCellWidth, cellWidth, resizerWidth);
     }
   );
 
+  const panController = useRef({}).current
   const [focusedRow, setFocusedRow] = useState(null);
   const [focusedField, setFocusedField] = useState(null);
   const [userSelect] = useState('none');
 
   const focusCell = useCallback(
     ({ fieldId, rowId }: { fieldId: string, rowId: string }) => {
-      console.log('focusCell', fieldId, rowId)
       setFocusedField(fieldId);
       setFocusedRow(rowId);
+    },
+    []
+  );
+
+  const reIndex = useCallback(
+    (payload: { fromIndex: number, toIndex: number }) => {
+      dispatch({ type: 'reindex', payload });
     },
     []
   );
@@ -114,6 +162,7 @@ export function Table({
     }, indexCellWidth);
 
     return {
+      panController,
       resizerWidth,
       resizeable,
       totalWidth,
@@ -128,9 +177,12 @@ export function Table({
       focusCell,
       focusedField,
       focusedRow,
-      indexCellWidth
+      indexCellWidth,
+      reIndex,
     };
   }, [
+    reIndex,
+    panController,
     rowHeight,
     cellWidth,
     borderColor,

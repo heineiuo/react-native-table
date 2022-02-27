@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import { TableContext, useTable } from './TableContext';
 import { ColumnResizer } from './ColumnResizer';
+import { ColumnReindexer } from './ColumnReindexer';
 
 export function TableHeadCell({
   resizeable = false,
@@ -43,7 +44,6 @@ export function TableHeadCell({
             height: rowHeight,
             position: 'absolute',
             top: 0,
-            padding: 4,
             textAligh: 'center',
           },
           {
@@ -51,7 +51,14 @@ export function TableHeadCell({
             width: field.widthValue,
           },
         ]}>
-        <Text>{field.title}</Text>
+        <ColumnReindexer field={field} index={index}>
+          <View
+            style={{
+              padding: 4,
+            }}>
+            <Text>{field.title}</Text>
+          </View>
+        </ColumnReindexer>
       </Animated.View>
       <ColumnResizer
         resizeable={resizeable}
