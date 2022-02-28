@@ -24,9 +24,9 @@ function resetPosition(fields, indexCellWidth, cellWidth, resizerWidth) {
 
   return fields.map((field) => {
     const left = prevRight;
-    prevRight += width;
+    const widthValue = field.widthValue ? field.widthValue._value : width;
+    prevRight += widthValue
     const leftValue = left;
-    const widthValue = width;
     const rightValue = prevRight - resizerWidth / 2;
     const highlightValue = 0;
     const result = {
@@ -45,7 +45,7 @@ function resetPosition(fields, indexCellWidth, cellWidth, resizerWidth) {
       result.rightValue.setValue(rightValue);
       result.highlightValue.setValue(highlightValue);
     }
-    return result
+    return result;
   });
 }
 
@@ -105,7 +105,7 @@ export function Table({
   const [internalFields, dispatch] = useReducer(
     (state, action) => {
       if (action.type === 'reindex') {
-            console.log(
+        console.log(
           'reindex current state',
           JSON.stringify(state.map((item) => item.fieldId))
         );
@@ -136,7 +136,7 @@ export function Table({
     }
   );
 
-  const panController = useRef({}).current
+  const panController = useRef({}).current;
   const [focusedRow, setFocusedRow] = useState(null);
   const [focusedField, setFocusedField] = useState(null);
   const [userSelect] = useState('none');
