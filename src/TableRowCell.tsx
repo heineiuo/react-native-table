@@ -62,7 +62,6 @@ export function TableRowCell({
             top: 0,
             borderColor,
             borderBottomWidth: 1,
-            padding: 4,
             height: rowHeight,
             overflow: "hidden",
             alignItems: "center",
@@ -99,7 +98,10 @@ export function TableRowCell({
             ></View>
           </View>
         )}
-        <TouchableOpacity style={{ flex: 1 }} onPress={onPress}>
+        <TouchableOpacity
+          style={{ width: "100%", height: "100%", padding: 4 }}
+          onPress={onPress}
+        >
           <Text style={{}}>{data.value}</Text>
         </TouchableOpacity>
       </Animated.View>
