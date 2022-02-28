@@ -1,10 +1,11 @@
-import React, { createContext, useContext } from "react";
+import { createContext, useContext } from "react";
+import { Animated } from "react-native";
 
 type TableContextState = {
   panController: any;
   resizerWidth: number;
   resizeable: boolean;
-  totalWidth: number;
+  totalWidthValue: Animated.Value;
   fields: any[];
   data: any[];
   keyExtractor: any;

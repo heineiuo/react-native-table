@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
-import { useTable } from './TableContext';
-import { TableHeadCell } from './TableHeadCell';
+import React, { useEffect } from "react";
+import { View, Animated } from "react-native";
+import { useTable } from "./TableContext";
+import { TableHeadCell } from "./TableHeadCell";
 
 export function TableHead() {
   const {
@@ -9,38 +9,41 @@ export function TableHead() {
     indexCellWidth,
     fields,
     rowHeight,
-    totalWidth,
+    totalWidthValue,
     resizeable,
   } = useTable();
 
   return (
-    <View
+    <Animated.View
       style={[
         {
           height: rowHeight,
-          width: totalWidth,
-          backgroundColor: '#fff',
+          width: totalWidthValue,
+          backgroundColor: "#fff",
         },
-      ]}>
+      ]}
+    >
       <View
         style={{
-          position: 'absolute',
+          position: "absolute",
           left: 0,
           top: 0,
           height: rowHeight,
           borderColor,
           borderBottomWidth: 1,
           width: indexCellWidth,
-        }}></View>
+        }}
+      ></View>
       {fields.map((field, index) => {
         return (
           <TableHeadCell
             resizeable={resizeable}
             field={field}
             index={index}
-            key={field.fieldId}></TableHeadCell>
+            key={field.fieldId}
+          ></TableHeadCell>
         );
       })}
-    </View>
+    </Animated.View>
   );
 }

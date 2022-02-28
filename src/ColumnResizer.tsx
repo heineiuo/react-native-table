@@ -11,9 +11,7 @@ export function ColumnResizer({
   field: any;
   resizeable?: boolean;
 }) {
-  const { leftValue, highlightValue, rightValue, widthValue } = field;
-  const [draging, setDraging] = useState(false);
-  const [panResult, setPanResult] = useState(null);
+  const { highlightValue, rightValue, widthValue } = field;
   const {
     rowHeight,
     panController,
@@ -21,6 +19,7 @@ export function ColumnResizer({
     resizerWidth,
     borderColor,
     highlightBorderColor,
+    totalWidthValue,
   } = useTable();
 
   const nextField = fields[index + 1];
@@ -29,6 +28,7 @@ export function ColumnResizer({
     let widthValueListenerId = null;
     let disable = false;
     const internalWidthValue = new Animated.Value(0);
+    let isLastField = false;
 
     return PanResponder.create({
       onMoveShouldSetPanResponder: (event, gestureState) => {
@@ -65,6 +65,10 @@ export function ColumnResizer({
           maxWidth = widthValue._value + nextField.widthValue._value - minWidth;
           nextField.widthValue.setOffset(nextField.widthValue._value);
           nextField.leftValue.setOffset(nextField.leftValue._value);
+          isLastField = false;
+        } else {
+          isLastField = true;
+          totalWidthValue.setOffset(totalWidthValue._value);
         }
 
         /**
@@ -87,6 +91,9 @@ export function ColumnResizer({
         if (disable) {
           return;
         }
+        if (isLastField) {
+          totalWidthValue.setValue(gestureState.dx);
+        }
         widthValue.setValue(gestureState.dx);
         rightValue.setValue(gestureState.dx);
         if (nextField) {
@@ -98,11 +105,14 @@ export function ColumnResizer({
         highlightValue.setValue(0);
         widthValue.flattenOffset();
         rightValue.flattenOffset();
+        totalWidthValue.flattenOffset();
+
         panController.current = null;
         if (nextField) {
           nextField.widthValue.flattenOffset();
           nextField.leftValue.flattenOffset();
         }
+        isLastField = false;
 
         internalWidthValue.removeListener(widthValueListenerId);
         disable = false;

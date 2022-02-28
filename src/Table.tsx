@@ -11,14 +11,29 @@ import { useTable, TableContext } from "./TableContext";
 import { TableHead } from "./TableHead";
 import { TableRow } from "./TableRow";
 
-function resetPosition(fields, indexCellWidth, cellWidth, resizerWidth) {
+function resetPosition({
+  fields,
+  indexCellWidth,
+  cellWidth,
+  resizerWidth,
+  totalWidthValue,
+}: {
+  fields: any[];
+  indexCellWidth: number;
+  cellWidth: number;
+  resizerWidth: number;
+  totalWidthValue: Animated.Value;
+}) {
   let prevRight = indexCellWidth;
   let width = cellWidth;
+  let totalWidth = indexCellWidth;
 
   return fields.map((field) => {
     const left = prevRight;
     const widthValue = field.widthValue ? field.widthValue._value : width;
     prevRight += widthValue;
+    totalWidth += widthValue;
+    totalWidthValue.setValue(totalWidth);
     const leftValue = left;
     const rightValue = prevRight - resizerWidth / 2;
     const highlightValue = 0;
@@ -95,6 +110,8 @@ export function Table({
    */
   rowHoverdBackgroundColor?: string;
 }) {
+  const totalWidthValue = useRef(new Animated.Value(0)).current;
+
   const [internalFields, dispatch] = useReducer(
     (state, action) => {
       if (action.type === "reindex") {
@@ -114,18 +131,25 @@ export function Table({
         );
         // return state;
         // return nextState;
-        return resetPosition(
-          nextState,
+        return resetPosition({
+          fields: nextState,
           indexCellWidth,
           cellWidth,
-          resizerWidth
-        );
+          resizerWidth,
+          totalWidthValue,
+        });
       }
       return state;
     },
     fields,
     (fields) => {
-      return resetPosition(fields, indexCellWidth, cellWidth, resizerWidth);
+      return resetPosition({
+        fields,
+        indexCellWidth,
+        cellWidth,
+        resizerWidth,
+        totalWidthValue,
+      });
     }
   );
 
@@ -150,15 +174,10 @@ export function Table({
   );
 
   const value = useMemo(() => {
-    const totalWidth = internalFields.reduce((total, item) => {
-      return total + item.width;
-    }, indexCellWidth);
-
     return {
       panController,
       resizerWidth,
       resizeable,
-      totalWidth,
       fields: internalFields,
       data,
       keyExtractor,
@@ -172,6 +191,7 @@ export function Table({
       focusedRow,
       indexCellWidth,
       reIndex,
+      totalWidthValue,
     };
   }, [
     reIndex,
@@ -190,6 +210,7 @@ export function Table({
     focusedField,
     focusedRow,
     indexCellWidth,
+    totalWidthValue,
   ]);
 
   useEffect(() => {

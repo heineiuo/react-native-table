@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Animated, Pressable } from "react-native";
 import { useTable } from "./TableContext";
 import { TableRowCell } from "./TableRowCell";
 
@@ -10,7 +10,7 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
     rowHeight,
     borderColor,
     indexCellWidth,
-    totalWidth,
+    totalWidthValue,
     keyExtractor,
   } = useTable();
 
@@ -19,49 +19,56 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
   }, [keyExtractor, item]);
 
   return (
-    <Pressable
-      style={(state) => {
-        const hovered = (state as unknown as any).hovered;
-        return [
-          {
-            height: rowHeight,
-            width: totalWidth,
-          },
-          hovered && {
-            backgroundColor: rowHoverdBackgroundColor,
-          },
-        ];
+    <Animated.View
+      style={{
+        height: rowHeight,
+        width: totalWidthValue,
       }}
     >
-      <View
-        style={{
-          position: "absolute",
-          left: 0,
-          top: 0,
-          padding: 4,
-          height: rowHeight,
-          borderColor,
-          borderBottomWidth: 1,
-          width: indexCellWidth,
+      <Pressable
+        style={(state) => {
+          const hovered = (state as unknown as any).hovered;
+          return [
+            {
+              height: rowHeight,
+              width: "100%",
+            },
+            hovered && {
+              backgroundColor: rowHoverdBackgroundColor,
+            },
+          ];
         }}
       >
-        <Text>{index + 1}</Text>
-      </View>
-      {fields.map((field, fieldIndex) => {
-        const data = item.fields.find(
-          (dataField) => dataField.fieldId === field.fieldId
-        );
-        return (
-          <TableRowCell
-            field={field}
-            rowId={rowId}
-            index={index}
-            fieldIndex={fieldIndex}
-            data={data ?? {}}
-            key={field.fieldId}
-          ></TableRowCell>
-        );
-      })}
-    </Pressable>
+        <View
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            padding: 4,
+            height: rowHeight,
+            borderColor,
+            borderBottomWidth: 1,
+            width: indexCellWidth,
+          }}
+        >
+          <Text>{index + 1}</Text>
+        </View>
+        {fields.map((field, fieldIndex) => {
+          const data = item.fields.find(
+            (dataField) => dataField.fieldId === field.fieldId
+          );
+          return (
+            <TableRowCell
+              field={field}
+              rowId={rowId}
+              index={index}
+              fieldIndex={fieldIndex}
+              data={data ?? {}}
+              key={field.fieldId}
+            ></TableRowCell>
+          );
+        })}
+      </Pressable>
+    </Animated.View>
   );
 }
