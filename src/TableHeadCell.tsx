@@ -21,7 +21,7 @@ export function TableHeadCell({
   index: number;
 }) {
   const { fields, rowHeight, borderColor } = useTable();
-  const prevField = fields[index - 1] ?? null;
+  // const prevField = fields[index - 1] ?? null;
 
   return (
     <>

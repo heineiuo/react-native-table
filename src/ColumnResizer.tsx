@@ -22,21 +22,20 @@ export function ColumnResizer({
     totalWidthValue,
   } = useTable();
 
-  const nextField = fields[index + 1];
-
   const panResponder = useMemo(() => {
     let widthValueListenerId = null;
     let disable = false;
     const internalWidthValue = new Animated.Value(0);
     let isLastField = false;
+    const nextField = fields[index + 1];
 
     return PanResponder.create({
+      onPanResponderTerminate: (e, gestureState) => {},
+      onPanResponderTerminationRequest: (e, gestureState) => {
+        return false;
+      },
+      onPanResponderReject: () => {},
       onMoveShouldSetPanResponder: (event, gestureState) => {
-        // console.log('resizer onMoveShouldSetPanResponder start');
-        // console.log(
-        //   'resizer onMoveShouldSetPanResponder',
-        //   panController.current
-        // );
         if (!panController.current) {
           panController.current = gestureState.stateID;
           return true;
@@ -47,8 +46,8 @@ export function ColumnResizer({
         disable = false;
         highlightValue.setValue(1);
         widthValue.setOffset(widthValue._value);
-        internalWidthValue.setOffset(widthValue._value);
         rightValue.setOffset(rightValue._value);
+        internalWidthValue.setOffset(widthValue._value);
         /**
          * 最小宽度
          * 默认40，晚点做成可配置
@@ -75,6 +74,8 @@ export function ColumnResizer({
          * 监听宽度变化，当超过最大宽度或小于最小宽度时禁止调整，
          * 否则允许调整
          */
+        internalWidthValue.removeAllListeners();
+
         widthValueListenerId = internalWidthValue.addListener(({ value }) => {
           if (value < minWidth) {
             disable = true;
@@ -106,6 +107,7 @@ export function ColumnResizer({
         widthValue.flattenOffset();
         rightValue.flattenOffset();
         totalWidthValue.flattenOffset();
+        internalWidthValue.flattenOffset();
 
         panController.current = null;
         if (nextField) {
@@ -113,12 +115,11 @@ export function ColumnResizer({
           nextField.leftValue.flattenOffset();
         }
         isLastField = false;
-
         internalWidthValue.removeListener(widthValueListenerId);
         disable = false;
       },
     });
-  }, [highlightValue, nextField, panController, rightValue, widthValue]);
+  }, [highlightValue, fields, index, panController, rightValue, widthValue]);
 
   return (
     <Animated.View
