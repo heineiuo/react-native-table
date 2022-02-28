@@ -1,9 +1,13 @@
 {
+  "name": "react-native-table-plus",
+  "version": "0.0.2",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "build:commonjs": "babel src --out-dir lib/commonjs --extensions '.ts,.tsx' --source-maps",
     "build:module": "tsc src/*.tsx --module es2015 --target es5 --jsx 'react-native' --sourceMap --outDir lib/module",
     "build:typescript": "tsc src/*.tsx --declaration --emitDeclarationOnly --jsx 'react-native' --outDir lib/typescript",
+    "prepublish": "node scripts/prepublish.js",
+    "postpublish": "node scripts/postpublish.js",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
