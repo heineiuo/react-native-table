@@ -18,6 +18,7 @@ export function ColumnResizer({
     fields,
     resizerWidth,
     borderColor,
+    cellMinWidth,
     highlightBorderColor,
     totalWidthValue,
   } = useTable();
@@ -48,11 +49,7 @@ export function ColumnResizer({
         widthValue.setOffset(widthValue._value);
         rightValue.setOffset(rightValue._value);
         internalWidthValue.setOffset(widthValue._value);
-        /**
-         * 最小宽度
-         * 默认40，晚点做成可配置
-         */
-        let minWidth = 40;
+
         /**
          * 最大宽度
          * 计算方式：当前column宽度+下一个column宽度-最小宽度
@@ -61,13 +58,15 @@ export function ColumnResizer({
         let maxWidth = -1;
 
         if (nextField) {
-          maxWidth = widthValue._value + nextField.widthValue._value - minWidth;
+          maxWidth =
+            widthValue._value + nextField.widthValue._value - cellMinWidth;
           nextField.widthValue.setOffset(nextField.widthValue._value);
           nextField.leftValue.setOffset(nextField.leftValue._value);
           isLastField = false;
         } else {
           isLastField = true;
-          totalWidthValue.setOffset(totalWidthValue._value);
+          const totalWidthInit = (totalWidthValue as unknown as any)._value;
+          totalWidthValue.setOffset(totalWidthInit);
         }
 
         /**
@@ -77,7 +76,7 @@ export function ColumnResizer({
         internalWidthValue.removeAllListeners();
 
         widthValueListenerId = internalWidthValue.addListener(({ value }) => {
-          if (value < minWidth) {
+          if (value < cellMinWidth) {
             disable = true;
           } else if (maxWidth > -1 && value > maxWidth) {
             disable = true;
@@ -119,7 +118,15 @@ export function ColumnResizer({
         disable = false;
       },
     });
-  }, [highlightValue, fields, index, panController, rightValue, widthValue]);
+  }, [
+    highlightValue,
+    fields,
+    cellMinWidth,
+    index,
+    panController,
+    rightValue,
+    widthValue,
+  ]);
 
   return (
     <Animated.View

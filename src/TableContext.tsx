@@ -19,6 +19,10 @@ type TableContextState = {
   focusedRow: string | null;
   indexCellWidth: number;
   reIndex: (options: { fromIndex: number; toIndex: number }) => void;
+  /**
+   * 最小单元格宽度
+   */
+  cellMinWidth: number;
 };
 
 export const TableContext = createContext({} as TableContextState);

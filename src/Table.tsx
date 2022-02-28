@@ -70,6 +70,7 @@ export function Table({
   highlightBorderColor = "blue",
   indexCellWidth = 40,
   rowHeight = 36,
+  cellMinWidth = 40,
   rowHoverdBackgroundColor = "#f6f8fa",
 }: {
   /**
@@ -80,6 +81,10 @@ export function Table({
    * 单元格宽度
    */
   cellWidth?: number;
+  /**
+   * 最小单元格宽度
+   */
+  cellMinWidth?: number;
   /**
    * 调整列宽的控件宽度
    */
@@ -192,6 +197,7 @@ export function Table({
       indexCellWidth,
       reIndex,
       totalWidthValue,
+      cellMinWidth,
     };
   }, [
     reIndex,
@@ -211,6 +217,7 @@ export function Table({
     focusedRow,
     indexCellWidth,
     totalWidthValue,
+    cellMinWidth,
   ]);
 
   useEffect(() => {
