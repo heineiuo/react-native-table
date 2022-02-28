@@ -1,22 +1,34 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
+    "build:commonjs": "babel src --out-dir lib/commonjs --extensions '.ts,.tsx' --source-maps",
+    "build:module": "tsc src/*.tsx --module es2015 --target es5 --jsx 'react-native' --sourceMap --outDir lib/module",
+    "build:typescript": "tsc src/*.tsx --declaration --emitDeclarationOnly --jsx 'react-native' --outDir lib/typescript",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject"
   },
-  "dependencies": {
+  "types": "lib/typescript/index.d.ts",
+  "module": "lib/module/index.js",
+  "react-native": "src/index.tsx",
+  "source": "src/index.tsx",
+  "files": [
+    "src",
+    "lib"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.12.9",
+    "@types/react": "^17.0.39",
+    "@types/react-native": "^0.67.0",
     "expo": "~43.0.2",
     "expo-status-bar": "~1.1.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
-    "react-native-web": "0.17.1"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.12.9"
-  },
-  "private": true
+    "react-native-web": "0.17.1",
+    "typescript": "~4.3.5"
+  }
 }

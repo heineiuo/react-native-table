@@ -1,31 +1,15 @@
-import React, {
-  useRef,
-  useState,
-  useReducer,
-  useCallback,
-  useMemo,
-  useEffect,
-} from 'react';
-import {
-  SafeAreaView,
-  Pressable,
-  Text,
-  View,
-  StyleSheet,
-  Animated,
-  PanResponder,
-  useAnimated,
-} from 'react-native';
-import { useTable } from './TableContext';
+import React, { useState, useMemo } from "react";
+import { Pressable, Animated, PanResponder } from "react-native";
+import { useTable } from "./TableContext";
 
 export function ColumnResizer({
   index,
   field,
   resizeable = false,
 }: {
-  index: number,
-  field: any,
-  resizeable?: boolean,
+  index: number;
+  field: any;
+  resizeable?: boolean;
 }) {
   const { leftValue, highlightValue, rightValue, widthValue } = field;
   const [draging, setDraging] = useState(false);
@@ -131,24 +115,27 @@ export function ColumnResizer({
       {...panResponder.panHandlers}
       style={[
         {
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: rightValue,
           zIndex: 10,
           height: rowHeight,
           width: resizerWidth,
         },
-      ]}>
+      ]}
+    >
       <Pressable
         style={[
           {
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
             width: resizerWidth,
             height: rowHeight,
           },
-        ]}>
+        ]}
+      >
         {(state) => {
+          const hovered = (state as unknown as any).hovered;
           return (
             <Animated.View
               style={[
@@ -165,11 +152,12 @@ export function ColumnResizer({
                     outputRange: [1, 3],
                   }),
                 },
-                state.hovered && {
+                hovered && {
                   width: 3,
                   backgroundColor: highlightBorderColor,
                 },
-              ]}></Animated.View>
+              ]}
+            ></Animated.View>
           );
         }}
       </Pressable>

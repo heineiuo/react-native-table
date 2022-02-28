@@ -1,24 +1,15 @@
-import React, { useRef, useMemo } from 'react';
-import {
-  SafeAreaView,
-  Pressable,
-  Text,
-  View,
-  StyleSheet,
-  Animated,
-  PanResponder,
-  useAnimated,
-} from 'react-native';
-import { useTable } from './TableContext';
+import React, { useRef, useMemo, ReactNode } from "react";
+import { Animated, PanResponder } from "react-native";
+import { useTable } from "./TableContext";
 
 export function ColumnReindexer({
   field,
   children,
   index,
 }: {
-  field: any,
-  index: number,
-  children: ReactNode,
+  field: any;
+  index: number;
+  children: ReactNode;
 }) {
   const { fields, rowHeight, panController, reIndex } = useTable();
   const { highlightValue, widthValue, rightValue, leftValue } = field;
@@ -65,7 +56,7 @@ export function ColumnReindexer({
         panController.current = null;
 
         console.log(
-          'reindex current fields',
+          "reindex current fields",
           fields.map((field1) => field1.fieldId)
         );
         const currentX = startPosition.current + gestureState.dx;
@@ -86,7 +77,7 @@ export function ColumnReindexer({
         if (highlightField) {
           let toIndex = highlightIndex + 1;
           if (toIndex === index) {
-            console.log('reindex: not change');
+            console.log("reindex: not change");
           } else {
             if (index < highlightIndex) {
               toIndex--;
@@ -113,9 +104,10 @@ export function ColumnReindexer({
       style={{
         zIndex: -1,
         opacity: opacityValue,
-        widthValue,
+        width: widthValue,
         height: rowHeight,
-      }}>
+      }}
+    >
       {children}
     </Animated.View>
   );

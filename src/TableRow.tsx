@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-import { View, Text, Pressable } from 'react-native';
-import { useTable } from './TableContext';
-import { TableRowCell } from './TableRowCell';
+import React, { useMemo } from "react";
+import { View, Text, Pressable } from "react-native";
+import { useTable } from "./TableContext";
+import { TableRowCell } from "./TableRowCell";
 
-export function TableRow({ item, index = 0 }: { item: any, index: number }) {
+export function TableRow({ item, index = 0 }: { item: any; index: number }) {
   const {
     fields,
     rowHoverdBackgroundColor,
@@ -20,18 +20,22 @@ export function TableRow({ item, index = 0 }: { item: any, index: number }) {
 
   return (
     <Pressable
-      style={(state) => [
-        {
-          height: rowHeight,
-          width: totalWidth,
-        },
-        state.hovered && {
-          backgroundColor: rowHoverdBackgroundColor,
-        },
-      ]}>
+      style={(state) => {
+        const hovered = (state as unknown as any).hovered;
+        return [
+          {
+            height: rowHeight,
+            width: totalWidth,
+          },
+          hovered && {
+            backgroundColor: rowHoverdBackgroundColor,
+          },
+        ];
+      }}
+    >
       <View
         style={{
-          position: 'absolute',
+          position: "absolute",
           left: 0,
           top: 0,
           padding: 4,
@@ -39,7 +43,8 @@ export function TableRow({ item, index = 0 }: { item: any, index: number }) {
           borderColor,
           borderBottomWidth: 1,
           width: indexCellWidth,
-        }}>
+        }}
+      >
         <Text>{index + 1}</Text>
       </View>
       {fields.map((field, fieldIndex) => {
@@ -53,7 +58,8 @@ export function TableRow({ item, index = 0 }: { item: any, index: number }) {
             index={index}
             fieldIndex={fieldIndex}
             data={data ?? {}}
-            key={field.fieldId}></TableRowCell>
+            key={field.fieldId}
+          ></TableRowCell>
         );
       })}
     </Pressable>

@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useMemo,
   useEffect,
-} from 'react';
+} from "react";
 import {
   SafeAreaView,
   Pressable,
@@ -14,9 +14,8 @@ import {
   StyleSheet,
   Animated,
   PanResponder,
-  useAnimated,
-} from 'react-native';
-import { useTable } from './TableContext';
+} from "react-native";
+import { useTable } from "./TableContext";
 
 export function ColumnSeperater({ field }, { field: any }) {
   const { rowHeight, resizerWidth, borderColor, highlightBorderColor } =
@@ -36,7 +35,8 @@ export function ColumnSeperater({ field }, { field: any }) {
           }),
           left: rightValue,
         },
-      ]}>
+      ]}
+    >
       <Animated.View
         style={[
           {
@@ -50,16 +50,17 @@ export function ColumnSeperater({ field }, { field: any }) {
               outputRange: [1, 3],
             }),
           },
-        ]}></Animated.View>
+        ]}
+      ></Animated.View>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   wrapper: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
   },
 });

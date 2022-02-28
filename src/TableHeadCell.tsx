@@ -5,29 +5,20 @@ import React, {
   useCallback,
   useMemo,
   useEffect,
-} from 'react';
-import {
-  SafeAreaView,
-  Pressable,
-  Text,
-  View,
-  StyleSheet,
-  Animated,
-  PanResponder,
-  useAnimated,
-} from 'react-native';
-import { TableContext, useTable } from './TableContext';
-import { ColumnResizer } from './ColumnResizer';
-import { ColumnReindexer } from './ColumnReindexer';
+} from "react";
+import { Text, View, Animated } from "react-native";
+import { TableContext, useTable } from "./TableContext";
+import { ColumnResizer } from "./ColumnResizer";
+import { ColumnReindexer } from "./ColumnReindexer";
 
 export function TableHeadCell({
   resizeable = false,
   field,
   index,
 }: {
-  resizeable?: boolean,
-  field: any,
-  index: number,
+  resizeable?: boolean;
+  field: any;
+  index: number;
 }) {
   const { fields, rowHeight, borderColor } = useTable();
   const prevField = fields[index - 1] ?? null;
@@ -37,25 +28,27 @@ export function TableHeadCell({
       <Animated.View
         style={[
           {
-            overflow: 'hidden',
+            overflow: "hidden",
             zIndex: 5,
             borderColor,
             borderBottomWidth: 1,
             height: rowHeight,
-            position: 'absolute',
+            position: "absolute",
             top: 0,
-            textAligh: 'center',
+            alignItems: "center",
           },
           {
             left: field.leftValue,
             width: field.widthValue,
           },
-        ]}>
+        ]}
+      >
         <ColumnReindexer field={field} index={index}>
           <View
             style={{
               padding: 4,
-            }}>
+            }}
+          >
             <Text>{field.title}</Text>
           </View>
         </ColumnReindexer>
@@ -63,7 +56,8 @@ export function TableHeadCell({
       <ColumnResizer
         resizeable={resizeable}
         field={field}
-        index={index}></ColumnResizer>
+        index={index}
+      ></ColumnResizer>
     </>
   );
 }

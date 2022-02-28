@@ -5,18 +5,11 @@ import React, {
   useCallback,
   useMemo,
   useEffect,
-} from 'react';
-import {
-  View,
-  FlatList,
-  Pressable,
-  Animated,
-  PanResponder,
-  useAnimated,
-} from 'react-native';
-import { TableContext } from './TableContext';
-import { TableHead } from './TableHead';
-import { TableRow } from './TableRow';
+} from "react";
+import { Animated } from "react-native";
+import { useTable, TableContext } from "./TableContext";
+import { TableHead } from "./TableHead";
+import { TableRow } from "./TableRow";
 
 function resetPosition(fields, indexCellWidth, cellWidth, resizerWidth) {
   let prevRight = indexCellWidth;
@@ -25,7 +18,7 @@ function resetPosition(fields, indexCellWidth, cellWidth, resizerWidth) {
   return fields.map((field) => {
     const left = prevRight;
     const widthValue = field.widthValue ? field.widthValue._value : width;
-    prevRight += widthValue
+    prevRight += widthValue;
     const leftValue = left;
     const rightValue = prevRight - resizerWidth / 2;
     const highlightValue = 0;
@@ -58,55 +51,55 @@ export function Table({
   onValueChange,
   cellWidth = 150,
   resizerWidth = 24,
-  borderColor = '#d8dee4',
-  highlightBorderColor = 'blue',
+  borderColor = "#d8dee4",
+  highlightBorderColor = "blue",
   indexCellWidth = 40,
   rowHeight = 36,
-  rowHoverdBackgroundColor = '#f6f8fa',
+  rowHoverdBackgroundColor = "#f6f8fa",
 }: {
   /**
    * 行高
    */
-  rowHeight?: number,
+  rowHeight?: number;
   /**
    * 单元格宽度
    */
-  cellWidth?: number,
+  cellWidth?: number;
   /**
    * 调整列宽的控件宽度
    */
-  resizerWidth?: number,
-  style?: any,
-  keyExtractor?: any,
-  resizeable?: booelean,
-  onValueChange?: any,
+  resizerWidth?: number;
+  style?: any;
+  keyExtractor?: any;
+  resizeable?: boolean;
+  onValueChange?: any;
   /**
    * 普通边框
    */
-  borderColor?: string,
+  borderColor?: string;
   /**
    * 高亮边框
    */
-  highlightBorderColor?: string,
+  highlightBorderColor?: string;
   /**
    * 字段（决定表格的列）
    */
-  fields: any[],
-  data: any[],
+  fields: any[];
+  data: any[];
   /**
    * 序号单元格宽度
    */
-  indexCellWidth?: number,
+  indexCellWidth?: number;
   /**
    * 悬浮行背景颜色
    */
-  rowHoverdBackgroundColor?: string,
+  rowHoverdBackgroundColor?: string;
 }) {
   const [internalFields, dispatch] = useReducer(
     (state, action) => {
-      if (action.type === 'reindex') {
+      if (action.type === "reindex") {
         console.log(
-          'reindex current state',
+          "reindex current state",
           JSON.stringify(state.map((item) => item.fieldId))
         );
 
@@ -116,7 +109,7 @@ export function Table({
         nextState.splice(fromIndex, 1);
         nextState.splice(toIndex, 0, target);
         console.log(
-          'reindex next state',
+          "reindex next state",
           JSON.stringify(nextState.map((item) => item.fieldId))
         );
         // return state;
@@ -139,10 +132,10 @@ export function Table({
   const panController = useRef({}).current;
   const [focusedRow, setFocusedRow] = useState(null);
   const [focusedField, setFocusedField] = useState(null);
-  const [userSelect] = useState('none');
+  const [userSelect] = useState("none");
 
   const focusCell = useCallback(
-    ({ fieldId, rowId }: { fieldId: string, rowId: string }) => {
+    ({ fieldId, rowId }: { fieldId: string; rowId: string }) => {
       setFocusedField(fieldId);
       setFocusedRow(rowId);
     },
@@ -150,8 +143,8 @@ export function Table({
   );
 
   const reIndex = useCallback(
-    (payload: { fromIndex: number, toIndex: number }) => {
-      dispatch({ type: 'reindex', payload });
+    (payload: { fromIndex: number; toIndex: number }) => {
+      dispatch({ type: "reindex", payload });
     },
     []
   );
@@ -214,7 +207,7 @@ export function Table({
         style={[
           {
             userSelect,
-            overflow: 'auto',
+            overflow: "auto",
             borderRadius: 2,
             borderColor,
             borderTopWidth: 1,
@@ -230,7 +223,10 @@ export function Table({
         data={data}
         renderItem={(data) => {
           return <TableRow {...data}></TableRow>;
-        }}></Animated.FlatList>
+        }}
+      ></Animated.FlatList>
     </TableContext.Provider>
   );
 }
+
+export { useTable };
