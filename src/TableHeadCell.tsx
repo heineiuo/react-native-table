@@ -20,8 +20,31 @@ export function TableHeadCell({
   field: any;
   index: number;
 }) {
-  const { fields, rowHeight, borderColor } = useTable();
+  const { fields, rowHeight, borderColor, ColumnHeaderComponent } = useTable();
   // const prevField = fields[index - 1] ?? null;
+
+  let header = (
+    <View
+      style={{
+        padding: 4,
+      }}
+    >
+      <Text>{field.title}</Text>
+    </View>
+  );
+
+  if (ColumnHeaderComponent) {
+    if ("type" in ColumnHeaderComponent) {
+      header = ColumnHeaderComponent;
+    } else {
+      header = (
+        <ColumnHeaderComponent
+          column={field}
+          field={field}
+        ></ColumnHeaderComponent>
+      );
+    }
+  }
 
   return (
     <>
@@ -44,13 +67,7 @@ export function TableHeadCell({
         ]}
       >
         <ColumnReindexer field={field} index={index}>
-          <View
-            style={{
-              padding: 4,
-            }}
-          >
-            <Text>{field.title}</Text>
-          </View>
+          {header}
         </ColumnReindexer>
       </Animated.View>
       <ColumnResizer

@@ -41,6 +41,7 @@ export function TableRowCell({
     rowHeight,
     focusedField,
     focusedRow,
+    renderCell,
     keyExtractor,
   } = useTable();
 
@@ -99,10 +100,15 @@ export function TableRowCell({
           </View>
         )}
         <TouchableOpacity
-          style={{ width: "100%", height: "100%", padding: 4 }}
+          style={{ width: "100%", height: "100%" }}
           onPress={onPress}
         >
-          <Text style={{}}>{data.value}</Text>
+          {renderCell({
+            columnId: field.fieldId,
+            fieldId: field.fieldId,
+            rowId,
+            item: data,
+          })}
         </TouchableOpacity>
       </Animated.View>
       <ColumnSeperater field={field}></ColumnSeperater>

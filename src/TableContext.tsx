@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, ReactNode, useContext } from "react";
 import { Animated } from "react-native";
 
 type TableContextState = {
@@ -20,9 +20,18 @@ type TableContextState = {
   indexCellWidth: number;
   reIndex: (options: { fromIndex: number; toIndex: number }) => void;
   /**
+   * 自定义列头
+   */
+  ColumnHeaderComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+  /**
    * 最小单元格宽度
    */
   cellMinWidth: number;
+  renderCell: (options: any) => ReactNode;
 };
 
 export const TableContext = createContext({} as TableContextState);

@@ -5,8 +5,9 @@ import React, {
   useCallback,
   useMemo,
   useEffect,
+  ReactNode,
 } from "react";
-import { Animated } from "react-native";
+import { Animated, Text, View } from "react-native";
 import { useTable, TableContext } from "./TableContext";
 import { TableHead } from "./TableHead";
 import { TableRow } from "./TableRow";
@@ -72,6 +73,8 @@ export function Table({
   rowHeight = 36,
   cellMinWidth = 40,
   rowHoverdBackgroundColor = "#f6f8fa",
+  ColumnHeaderComponent,
+  renderCell,
 }: {
   /**
    * 行高
@@ -93,6 +96,20 @@ export function Table({
   keyExtractor?: any;
   resizeable?: boolean;
   onValueChange?: any;
+  /**
+   * 自定义渲染单元格
+   */
+  renderCell?: (options: any) => ReactNode;
+
+  /**
+   * 自定义列头
+   */
+  ColumnHeaderComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+
   /**
    * 普通边框
    */
@@ -178,6 +195,24 @@ export function Table({
     []
   );
 
+  const internalRenderCell = useCallback(
+    (option) => {
+      if (renderCell) {
+        return renderCell(option);
+      }
+      return (
+        <View
+          style={{
+            padding: 4,
+          }}
+        >
+          <Text style={{}}>{option.item.value}</Text>
+        </View>
+      );
+    },
+    [renderCell]
+  );
+
   const value = useMemo(() => {
     return {
       panController,
@@ -198,6 +233,8 @@ export function Table({
       reIndex,
       totalWidthValue,
       cellMinWidth,
+      renderCell: internalRenderCell,
+      ColumnHeaderComponent,
     };
   }, [
     reIndex,
@@ -218,6 +255,8 @@ export function Table({
     indexCellWidth,
     totalWidthValue,
     cellMinWidth,
+    internalRenderCell,
+    ColumnHeaderComponent,
   ]);
 
   useEffect(() => {

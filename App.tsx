@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { SafeAreaView, useWindowDimensions } from "react-native";
+import {
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { Table } from "./src/Table";
 
 const sampleData = () =>
@@ -34,6 +40,46 @@ export default function App() {
         style={{ margin: 10, width: width - 20, height: height - 20 }}
         fields={fields}
         data={data}
+        ColumnHeaderComponent={({ column }) => {
+          return (
+            <View
+              style={{
+                padding: 4,
+              }}
+            >
+              <Text style={{ color: "green" }}>{column.title}</Text>
+            </View>
+          );
+        }}
+        renderCell={({ item }) => {
+          return (
+            <View
+              style={{
+                padding: 4,
+              }}
+            >
+              <Text style={{ color: "blue" }}>{item.value}</Text>
+              <TouchableOpacity
+                onPress={(e) => {
+                  e.preventDefault();
+                }}
+                style={{
+                  position: "absolute",
+                  right: 4,
+                  top: 4,
+                  borderRadius: 6,
+                  borderColor: "#eee",
+                  borderWidth: 1,
+                  backgroundColor: "#fff",
+                  paddingHorizontal: 8,
+                  paddingVertical: 4,
+                }}
+              >
+                <Text>↓</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        }}
       ></Table>
     </SafeAreaView>
   );
