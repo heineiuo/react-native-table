@@ -6,76 +6,19 @@ import React, {
   useMemo,
   useEffect,
   ReactNode,
+  forwardRef,
+  useImperativeHandle,
 } from "react";
 import { Animated, Text, View } from "react-native";
 import { useTable, TableContext } from "./TableContext";
 import { TableHead } from "./TableHead";
 import { TableRow } from "./TableRow";
+import { TableResizeMode } from "./TableTypes";
+import { resetColumnPosition } from "./TableUtils";
 
-function resetPosition({
-  fields,
-  indexCellWidth,
-  cellWidth,
-  resizerWidth,
-  totalWidthValue,
-}: {
-  fields: any[];
-  indexCellWidth: number;
-  cellWidth: number;
-  resizerWidth: number;
-  totalWidthValue: Animated.Value;
-}) {
-  let prevRight = indexCellWidth;
-  let width = cellWidth;
-  let totalWidth = indexCellWidth;
+type FieldsChangeFunc = (fields: {}[]) => void;
 
-  return fields.map((field) => {
-    const left = prevRight;
-    const widthValue = field.widthValue ? field.widthValue._value : width;
-    prevRight += widthValue;
-    totalWidth += widthValue;
-    totalWidthValue.setValue(totalWidth);
-    const leftValue = left;
-    const rightValue = prevRight - resizerWidth / 2;
-    const highlightValue = 0;
-    const result = {
-      left,
-      width,
-      ...field,
-    };
-    if (!result.leftValue) {
-      result.leftValue = new Animated.Value(leftValue);
-      result.widthValue = new Animated.Value(widthValue);
-      result.rightValue = new Animated.Value(rightValue);
-      result.highlightValue = new Animated.Value(highlightValue);
-    } else {
-      result.leftValue.setValue(leftValue);
-      result.widthValue.setValue(widthValue);
-      result.rightValue.setValue(rightValue);
-      result.highlightValue.setValue(highlightValue);
-    }
-    return result;
-  });
-}
-
-export function Table({
-  fields,
-  style,
-  data,
-  keyExtractor = (item) => item.id,
-  resizeable = true,
-  onValueChange,
-  cellWidth = 150,
-  resizerWidth = 24,
-  borderColor = "#d8dee4",
-  highlightBorderColor = "blue",
-  indexCellWidth = 40,
-  rowHeight = 36,
-  cellMinWidth = 40,
-  rowHoverdBackgroundColor = "#f6f8fa",
-  ColumnHeaderComponent,
-  renderCell,
-}: {
+type TableProps = {
   /**
    * 行高
    */
@@ -89,20 +32,23 @@ export function Table({
    */
   cellMinWidth?: number;
   /**
-   * 调整列宽的控件宽度
+   * The widget width of column resizer
    */
   resizerWidth?: number;
   style?: any;
   keyExtractor?: any;
   resizeable?: boolean;
   onValueChange?: any;
+
+  resizeMode?: TableResizeMode;
+
   /**
-   * 自定义渲染单元格
+   * custom cell renderer
    */
   renderCell?: (options: any) => ReactNode;
 
   /**
-   * 自定义列头
+   * custom column header component
    */
   ColumnHeaderComponent?:
     | React.ComponentType<any>
@@ -111,66 +57,91 @@ export function Table({
     | undefined;
 
   /**
-   * 普通边框
+   * border color
    */
   borderColor?: string;
   /**
-   * 高亮边框
+   * highlight cell's border color
    */
   highlightBorderColor?: string;
   /**
-   * 字段（决定表格的列）
+   * @deprecated Use initialColumns instead
+   * columns
    */
-  fields: any[];
+  fields?: any[];
+
+  initialColumns?: any[];
   data: any[];
   /**
    * 序号单元格宽度
    */
   indexCellWidth?: number;
+  tailCellWidth?: number;
   /**
    * 悬浮行背景颜色
    */
   rowHoverdBackgroundColor?: string;
-}) {
-  const totalWidthValue = useRef(new Animated.Value(0)).current;
+};
+
+type TableInstance = {
+  addColumn: any;
+  delColumn: any;
+};
+
+const Table = forwardRef<TableInstance, TableProps>(function Table(
+  {
+    initialColumns,
+    fields,
+    resizeMode = "increase-total-width",
+    style,
+    data,
+    keyExtractor = (item) => item.id,
+    resizeable = true,
+    onValueChange,
+    cellWidth = 150,
+    resizerWidth = 24,
+    borderColor = "#d8dee4",
+    highlightBorderColor = "blue",
+    indexCellWidth = 40,
+    tailCellWidth = 100,
+    rowHeight = 36,
+    cellMinWidth = 40,
+    rowHoverdBackgroundColor = "#f6f8fa",
+    ColumnHeaderComponent,
+    renderCell,
+  },
+  ref
+) {
+  const tailCellLeftValue = useRef(new Animated.Value(0)).current;
+  const [tableWidth, setTableWidth] = useState(0);
 
   const [internalFields, dispatch] = useReducer(
     (state, action) => {
       if (action.type === "reindex") {
-        console.log(
-          "reindex current state",
-          JSON.stringify(state.map((item) => item.fieldId))
-        );
-
         const { fromIndex, toIndex } = action.payload;
         const nextState = state.slice();
         const target = nextState[fromIndex];
         nextState.splice(fromIndex, 1);
         nextState.splice(toIndex, 0, target);
-        console.log(
-          "reindex next state",
-          JSON.stringify(nextState.map((item) => item.fieldId))
-        );
-        // return state;
-        // return nextState;
-        return resetPosition({
+        return resetColumnPosition({
           fields: nextState,
           indexCellWidth,
           cellWidth,
           resizerWidth,
-          totalWidthValue,
+          tailCellWidth,
         });
       }
+
       return state;
     },
     fields,
     (fields) => {
-      return resetPosition({
+      return resetColumnPosition({
         fields,
         indexCellWidth,
         cellWidth,
         resizerWidth,
-        totalWidthValue,
+        tailCellWidth,
       });
     }
   );
@@ -213,7 +184,21 @@ export function Table({
     [renderCell]
   );
 
+  const onLayout = useCallback((e) => {
+    const tableWidth = e.nativeEvent.layout.width;
+    setTableWidth(tableWidth);
+    dispatch({ type: "update-width", payload: { tableWidth } });
+  }, []);
+
   const value = useMemo(() => {
+    let totalWidthValue = new Animated.Value(indexCellWidth);
+    for (const field of internalFields) {
+      totalWidthValue = Animated.add(
+        totalWidthValue,
+        field.widthValue
+      ) as Animated.Value;
+    }
+
     return {
       panController,
       resizerWidth,
@@ -235,6 +220,9 @@ export function Table({
       cellMinWidth,
       renderCell: internalRenderCell,
       ColumnHeaderComponent,
+      tailCellLeftValue,
+      resizeMode,
+      tableWidth,
     };
   }, [
     reIndex,
@@ -253,15 +241,32 @@ export function Table({
     focusedField,
     focusedRow,
     indexCellWidth,
-    totalWidthValue,
+
+    tailCellLeftValue,
     cellMinWidth,
     internalRenderCell,
     ColumnHeaderComponent,
+    tableWidth,
+    resizeMode,
   ]);
 
-  useEffect(() => {
-    return () => {};
-  }, []);
+  useImperativeHandle(
+    ref,
+    () => {
+      function addColumn(payload) {
+        dispatch({ type: "add-field", payload });
+      }
+      function delColumn(payload) {
+        dispatch({ type: "del-field", payload });
+      }
+
+      return {
+        addColumn,
+        delColumn,
+      };
+    },
+    []
+  );
 
   useEffect(() => {
     if (onValueChange) {
@@ -271,6 +276,7 @@ export function Table({
   return (
     <TableContext.Provider value={value}>
       <Animated.FlatList
+        onLayout={onLayout}
         style={[
           {
             userSelect,
@@ -294,6 +300,7 @@ export function Table({
       ></Animated.FlatList>
     </TableContext.Provider>
   );
-}
+});
 
-export { useTable };
+export { useTable, Table };
+export type { TableInstance, TableProps };

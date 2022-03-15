@@ -20,7 +20,13 @@ export function TableHeadCell({
   field: any;
   index: number;
 }) {
-  const { fields, rowHeight, borderColor, ColumnHeaderComponent } = useTable();
+  const {
+    fields,
+    rowHeight,
+    borderColor,
+    ColumnHeaderComponent,
+    indexCellWidth,
+  } = useTable();
   // const prevField = fields[index - 1] ?? null;
 
   let header = (
