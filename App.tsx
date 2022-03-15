@@ -11,7 +11,7 @@ import {
 import { Table, TableInstance } from "./src/Table";
 
 const sampleData = () =>
-  Array.from({ length: 100 }, (v, k) => {
+  Array.from({ length: 100000 }, (v, k) => {
     return {
       id: `id${k}`,
       fields: [

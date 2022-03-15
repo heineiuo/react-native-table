@@ -292,6 +292,10 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
           },
           style,
         ]}
+        getItemLayout={(data, index) => {
+          return { length: rowHeight, offset: rowHeight * index, index };
+        }}
+        disableVirtualization={false}
         stickyHeaderIndices={[0]}
         ListHeaderComponent={TableHead}
         keyExtractor={keyExtractor}
