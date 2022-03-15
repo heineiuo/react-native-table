@@ -43,15 +43,16 @@ export function TableRowCell({
         style={[
           {
             zIndex: 5,
-            position: "absolute",
-            top: 0,
+            position: "relative",
+            // top: 0,
             borderColor,
             borderBottomWidth: 1,
             height: rowHeight,
             overflow: "hidden",
             alignItems: "center",
+            // left: field.leftValue,
+            width: field.widthValue,
           },
-          { left: field.leftValue, width: field.widthValue },
         ]}
       >
         {isFocused && (
@@ -59,7 +60,7 @@ export function TableRowCell({
             style={[
               {
                 zIndex: 0,
-                position: "absolute",
+                // position: "absolute",
                 width: "100%",
                 height: "100%",
                 borderWidth: 2,
@@ -94,8 +95,11 @@ export function TableRowCell({
             item: data,
           })}
         </TouchableOpacity>
+        <ColumnSeperater
+          field={field}
+          fieldIndex={fieldIndex}
+        ></ColumnSeperater>
       </Animated.View>
-      <ColumnSeperater field={field} fieldIndex={fieldIndex}></ColumnSeperater>
     </>
   );
 }

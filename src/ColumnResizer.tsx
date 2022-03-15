@@ -145,7 +145,8 @@ export function ColumnResizer({
         {
           position: "absolute",
           top: 0,
-          left: Animated.subtract(field.rightValue, resizerWidth / 2),
+          right: -resizerWidth / 2,
+          // left: Animated.subtract(field.rightValue, resizerWidth / 2),
           zIndex: 10,
           height: rowHeight,
           width: resizerWidth,

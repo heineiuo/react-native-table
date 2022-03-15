@@ -32,6 +32,9 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
           const hovered = (state as unknown as any).hovered;
           return [
             {
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
               height: rowHeight,
               width: "100%",
               borderBottomWidth: 1,
@@ -45,7 +48,7 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
       >
         <View
           style={{
-            position: "absolute",
+            // position: "absolute",
             left: 0,
             top: 0,
             padding: 4,

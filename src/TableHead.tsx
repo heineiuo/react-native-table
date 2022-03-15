@@ -25,12 +25,15 @@ export function TableHead() {
           height: rowHeight,
           borderColor,
           backgroundColor: "#fff",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-start",
         },
       ]}
     >
       <View
         style={{
-          position: "absolute",
+          // position: "absolute",
           left: 0,
           top: 0,
           height: rowHeight,

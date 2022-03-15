@@ -53,34 +53,30 @@ export function TableHeadCell({
   }
 
   return (
-    <>
-      <Animated.View
-        style={[
-          {
-            overflow: "hidden",
-            zIndex: 5,
-            borderColor,
-            borderBottomWidth: 1,
-            height: rowHeight,
-            position: "absolute",
-            top: 0,
-            alignItems: "center",
-          },
-          {
-            left: field.leftValue,
-            width: field.widthValue,
-          },
-        ]}
-      >
-        <ColumnReindexer field={field} index={index}>
-          {header}
-        </ColumnReindexer>
-      </Animated.View>
+    <Animated.View
+      style={[
+        {
+          overflow: "hidden",
+          zIndex: 5,
+          borderColor,
+          borderBottomWidth: 1,
+          height: rowHeight,
+          // position: "absolute",
+          top: 0,
+          alignItems: "center",
+          // left: field.leftValue,
+          width: field.widthValue,
+        },
+      ]}
+    >
+      <ColumnReindexer field={field} index={index}>
+        {header}
+      </ColumnReindexer>
       <ColumnResizer
         resizeable={resizeable}
         field={field}
         index={index}
       ></ColumnResizer>
-    </>
+    </Animated.View>
   );
 }
