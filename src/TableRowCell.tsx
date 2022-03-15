@@ -55,35 +55,10 @@ export function TableRowCell({
           },
         ]}
       >
-        {isFocused && (
-          <View
-            style={[
-              {
-                zIndex: 0,
-                // position: "absolute",
-                width: "100%",
-                height: "100%",
-                borderWidth: 2,
-                top: 0,
-                left: 0,
-                borderColor: highlightBorderColor,
-              },
-            ]}
-          >
-            <View
-              style={[
-                {
-                  width: "100%",
-                  height: "100%",
-                  borderWidth: 3,
-                  top: 0,
-                  left: 0,
-                  borderColor: "#fff",
-                },
-              ]}
-            ></View>
-          </View>
-        )}
+        <HighlightArea
+          visible={isFocused}
+          color={highlightBorderColor}
+        ></HighlightArea>
         <TouchableOpacity
           style={{ width: "100%", height: "100%" }}
           onPress={onPress}
@@ -101,5 +76,38 @@ export function TableRowCell({
         ></ColumnSeperater>
       </Animated.View>
     </>
+  );
+}
+
+function HighlightArea({ visible, color }: { visible: boolean; color: any }) {
+  return (
+    <View
+      style={[
+        {
+          display: visible ? "flex" : "none",
+          zIndex: 0,
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          borderWidth: 2,
+          top: 0,
+          left: 0,
+          borderColor: color,
+        },
+      ]}
+    >
+      <View
+        style={[
+          {
+            width: "100%",
+            height: "100%",
+            borderWidth: 3,
+            top: 0,
+            left: 0,
+            borderColor: "#fff",
+          },
+        ]}
+      ></View>
+    </View>
   );
 }
