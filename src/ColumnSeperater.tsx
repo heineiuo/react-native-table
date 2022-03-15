@@ -1,26 +1,20 @@
-import React, {
-  useRef,
-  useState,
-  useReducer,
-  useCallback,
-  useMemo,
-  useEffect,
-} from "react";
-import {
-  SafeAreaView,
-  Pressable,
-  Text,
-  View,
-  StyleSheet,
-  Animated,
-  PanResponder,
-} from "react-native";
+import React from "react";
+import { StyleSheet, Animated } from "react-native";
 import { useTable } from "./TableContext";
 
-export function ColumnSeperater({ field }, { field: any }) {
-  const { rowHeight, resizerWidth, borderColor, highlightBorderColor } =
-    useTable();
-  const { rightValue, highlightValue } = field;
+export function ColumnSeperater(
+  { field, fieldIndex },
+  { field: any, fieldIndex: number }
+) {
+  const {
+    rowHeight,
+    fields,
+    resizerWidth,
+    borderColor,
+    highlightBorderColor,
+    indexCellWidth,
+  } = useTable();
+  const { highlightValue } = field;
 
   return (
     <Animated.View
@@ -33,7 +27,7 @@ export function ColumnSeperater({ field }, { field: any }) {
             inputRange: [0, 1],
             outputRange: [-10, 10],
           }),
-          left: rightValue,
+          left: Animated.subtract(field.rightValue, resizerWidth / 2),
         },
       ]}
     >

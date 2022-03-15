@@ -10,15 +10,20 @@ export function TableHead() {
     fields,
     rowHeight,
     totalWidthValue,
+    tailCellLeftValue,
     resizeable,
+    tableWidth,
   } = useTable();
 
   return (
     <Animated.View
       style={[
         {
-          height: rowHeight,
           width: totalWidthValue,
+          minWidth: tableWidth,
+          borderBottomWidth: 1,
+          height: rowHeight,
+          borderColor,
           backgroundColor: "#fff",
         },
       ]}
@@ -29,8 +34,8 @@ export function TableHead() {
           left: 0,
           top: 0,
           height: rowHeight,
-          borderColor,
-          borderBottomWidth: 1,
+          // borderColor,
+          // borderBottomWidth: 1,
           width: indexCellWidth,
         }}
       ></View>
@@ -44,6 +49,15 @@ export function TableHead() {
           ></TableHeadCell>
         );
       })}
+      <Animated.View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: tailCellLeftValue,
+          minWidth: 100,
+          height: rowHeight,
+        }}
+      ></Animated.View>
     </Animated.View>
   );
 }

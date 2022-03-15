@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Pressable, Animated, PanResponder } from "react-native";
 import { useTable } from "./TableContext";
 
@@ -11,7 +11,7 @@ export function ColumnResizer({
   field: any;
   resizeable?: boolean;
 }) {
-  const { highlightValue, rightValue, widthValue } = field;
+  const { highlightValue, widthValue } = field;
   const {
     rowHeight,
     panController,
@@ -20,14 +20,19 @@ export function ColumnResizer({
     borderColor,
     cellMinWidth,
     highlightBorderColor,
-    totalWidthValue,
+    resizeMode,
+    indexCellWidth,
   } = useTable();
 
   const panResponder = useMemo(() => {
+    if (!resizeable) {
+      return {
+        panHandlers: {},
+      };
+    }
     let widthValueListenerId = null;
     let disable = false;
     const internalWidthValue = new Animated.Value(0);
-    let isLastField = false;
     const nextField = fields[index + 1];
 
     return PanResponder.create({
@@ -36,6 +41,11 @@ export function ColumnResizer({
         return false;
       },
       onPanResponderReject: () => {},
+
+      /**
+       * 为了不和位置调整冲突，在context里记录当前的stateID，
+       * 当stateID一致时返回true，否则返回false
+       */
       onMoveShouldSetPanResponder: (event, gestureState) => {
         if (!panController.current) {
           panController.current = gestureState.stateID;
@@ -43,12 +53,17 @@ export function ColumnResizer({
         }
         return panController.current === gestureState.stateID;
       },
+      /**
+       * 手势初始化
+       * 1. 判断是否是最后一个Field
+       * 2. 计算最大宽度
+       */
       onPanResponderGrant: () => {
         disable = false;
         highlightValue.setValue(1);
-        widthValue.setOffset(widthValue._value);
-        rightValue.setOffset(rightValue._value);
-        internalWidthValue.setOffset(widthValue._value);
+        const currentWidth = JSON.parse(JSON.stringify(widthValue));
+        widthValue.setOffset(currentWidth);
+        internalWidthValue.setOffset(currentWidth);
 
         /**
          * 最大宽度
@@ -57,16 +72,12 @@ export function ColumnResizer({
          */
         let maxWidth = -1;
 
-        if (nextField) {
-          maxWidth =
-            widthValue._value + nextField.widthValue._value - cellMinWidth;
-          nextField.widthValue.setOffset(nextField.widthValue._value);
-          nextField.leftValue.setOffset(nextField.leftValue._value);
-          isLastField = false;
-        } else {
-          isLastField = true;
-          const totalWidthInit = (totalWidthValue as unknown as any)._value;
-          totalWidthValue.setOffset(totalWidthInit);
+        if (resizeMode === "keep-total-width" && nextField) {
+          const nextFieldWidth = JSON.parse(
+            JSON.stringify(nextField.widthValue)
+          );
+          maxWidth = currentWidth + nextFieldWidth - cellMinWidth;
+          nextField.widthValue.setOffset(nextFieldWidth);
         }
 
         /**
@@ -76,55 +87,54 @@ export function ColumnResizer({
         internalWidthValue.removeAllListeners();
 
         widthValueListenerId = internalWidthValue.addListener(({ value }) => {
-          if (value < cellMinWidth) {
-            disable = true;
-          } else if (maxWidth > -1 && value > maxWidth) {
+          if (value < cellMinWidth || (maxWidth > -1 && value > maxWidth)) {
             disable = true;
           } else {
             disable = false;
           }
         });
       },
+      /**
+       * 移动手势时修改animated value
+       * 1. 先更新internalWidthValue，这个值用来判断是否disable，所以
+       * 需要保持更新，放在disable之前。
+       *
+       */
       onPanResponderMove: (event, gestureState) => {
         // console.log('resizer onPanResponderMove', panController.current);
         internalWidthValue.setValue(gestureState.dx);
         if (disable) {
           return;
         }
-        if (isLastField) {
-          totalWidthValue.setValue(gestureState.dx);
-        }
         widthValue.setValue(gestureState.dx);
-        rightValue.setValue(gestureState.dx);
-        if (nextField) {
+
+        if (resizeMode === "keep-total-width" && nextField) {
           nextField.widthValue.setValue(-gestureState.dx);
-          nextField.leftValue.setValue(gestureState.dx);
         }
       },
+      /**
+       * 松开手势时flattenOffset
+       */
       onPanResponderRelease: () => {
         highlightValue.setValue(0);
         widthValue.flattenOffset();
-        rightValue.flattenOffset();
-        totalWidthValue.flattenOffset();
         internalWidthValue.flattenOffset();
 
         panController.current = null;
         if (nextField) {
           nextField.widthValue.flattenOffset();
-          nextField.leftValue.flattenOffset();
         }
-        isLastField = false;
         internalWidthValue.removeListener(widthValueListenerId);
         disable = false;
       },
     });
   }, [
+    resizeable,
     highlightValue,
     fields,
     cellMinWidth,
     index,
     panController,
-    rightValue,
     widthValue,
   ]);
 
@@ -135,7 +145,7 @@ export function ColumnResizer({
         {
           position: "absolute",
           top: 0,
-          left: rightValue,
+          left: Animated.subtract(field.rightValue, resizerWidth / 2),
           zIndex: 10,
           height: rowHeight,
           width: resizerWidth,

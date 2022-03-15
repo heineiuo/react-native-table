@@ -1,28 +1,10 @@
-import React, {
-  useRef,
-  useState,
-  useReducer,
-  useCallback,
-  useMemo,
-  useEffect,
-} from "react";
-import {
-  SafeAreaView,
-  Pressable,
-  Text,
-  View,
-  StyleSheet,
-  Animated,
-  PanResponder,
-  TouchableOpacity,
-} from "react-native";
-import { TableContext, useTable } from "./TableContext";
+import React, { useCallback, useMemo } from "react";
+import { View, Animated, TouchableOpacity } from "react-native";
+import { useTable } from "./TableContext";
 import { ColumnSeperater } from "./ColumnSeperater";
 
 export function TableRowCell({
-  resizeable = false,
   field,
-  index,
   fieldIndex,
   data,
   rowId,
@@ -43,6 +25,8 @@ export function TableRowCell({
     focusedRow,
     renderCell,
     keyExtractor,
+    fields,
+    indexCellWidth,
   } = useTable();
 
   const onPress = useCallback(() => {
@@ -111,7 +95,7 @@ export function TableRowCell({
           })}
         </TouchableOpacity>
       </Animated.View>
-      <ColumnSeperater field={field}></ColumnSeperater>
+      <ColumnSeperater field={field} fieldIndex={fieldIndex}></ColumnSeperater>
     </>
   );
 }

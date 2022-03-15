@@ -12,6 +12,7 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
     indexCellWidth,
     totalWidthValue,
     keyExtractor,
+    tableWidth,
   } = useTable();
 
   const rowId = useMemo(() => {
@@ -23,6 +24,7 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
       style={{
         height: rowHeight,
         width: totalWidthValue,
+        minWidth: tableWidth,
       }}
     >
       <Pressable
@@ -32,6 +34,8 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
             {
               height: rowHeight,
               width: "100%",
+              borderBottomWidth: 1,
+              borderColor,
             },
             hovered && {
               backgroundColor: rowHoverdBackgroundColor,
@@ -46,8 +50,6 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
             top: 0,
             padding: 4,
             height: rowHeight,
-            borderColor,
-            borderBottomWidth: 1,
             width: indexCellWidth,
           }}
         >

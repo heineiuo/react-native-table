@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Animated,
+  Platform,
   SafeAreaView,
   Text,
   TouchableOpacity,
   useWindowDimensions,
   View,
 } from "react-native";
-import { Table } from "./src/Table";
+import { Table, TableInstance } from "./src/Table";
 
 const sampleData = () =>
   Array.from({ length: 100 }, (v, k) => {
@@ -32,12 +34,59 @@ export default function App() {
   const { height, width } = useWindowDimensions();
   const [fields, setFields] = useState(sampleFields);
   const [data, setData] = useState(sampleData);
+  const tableRef = useRef<TableInstance>();
+
+  const val1 = useRef(new Animated.Value(100));
+  const val2 = useRef(new Animated.Value(200));
+  const val4 = useRef(new Animated.Value(200));
+
+  // work
+  // const val3 = useRef(Animated.add(val1.current, val2.current));
+
+  // work
+  const val3 = useMemo(() => {
+    return Animated.add(Animated.add(val1.current, val2.current), val4.current);
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS === "web") {
+      document.body.style.margin = "0px";
+    }
+
+    setTimeout(() => {
+      // work
+      // val1.current.setValue(300);
+
+      // work
+      Animated.timing(val1.current, {
+        toValue: width - 420,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    }, 2000);
+  }, []);
 
   return (
     <SafeAreaView>
+      <View style={{ width: "100%" }}>
+        <Animated.View
+          style={{
+            backgroundColor: "#af1",
+            height: 10,
+            width: val3,
+          }}
+        ></Animated.View>
+      </View>
+
       <Table
+        ref={tableRef}
         highlightBorderColor="blue"
-        style={{ margin: 10, width: width - 20, height: height - 20 }}
+        style={{
+          overflowX: "hidden",
+          margin: 10,
+          width: width - 40,
+          height: height - 20,
+        }}
         fields={fields}
         data={data}
         ColumnHeaderComponent={({ column }) => {

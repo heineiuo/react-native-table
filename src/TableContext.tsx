@@ -1,11 +1,13 @@
 import { createContext, ReactNode, useContext } from "react";
 import { Animated } from "react-native";
+import { TableResizeMode } from "./TableTypes";
 
 type TableContextState = {
   panController: any;
   resizerWidth: number;
   resizeable: boolean;
   totalWidthValue: Animated.Value;
+  tailCellLeftValue: Animated.Value;
   fields: any[];
   data: any[];
   keyExtractor: any;
@@ -31,7 +33,12 @@ type TableContextState = {
    * 最小单元格宽度
    */
   cellMinWidth: number;
+  resizeMode: TableResizeMode;
   renderCell: (options: any) => ReactNode;
+  /**
+   * 表格容器宽度
+   */
+  tableWidth: number;
 };
 
 export const TableContext = createContext({} as TableContextState);
