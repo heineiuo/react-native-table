@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { View, Animated, TouchableOpacity } from "react-native";
 import { useTable } from "./TableContext";
 import { ColumnSeperater } from "./ColumnSeperater";
+import { TableRowCellHighlight } from "./TableRowCellHighlight";
 
 export function TableRowCell({
   field,
@@ -44,23 +45,24 @@ export function TableRowCell({
           {
             zIndex: 5,
             position: "relative",
-            // top: 0,
             borderColor,
             borderBottomWidth: 1,
             height: rowHeight,
-            overflow: "hidden",
             alignItems: "center",
-            // left: field.leftValue,
             width: field.widthValue,
+            /**
+             * Set overflow visible to keep seperator visible
+             */
+            overflow: "visible",
           },
         ]}
       >
-        <HighlightArea
+        <TableRowCellHighlight
           visible={isFocused}
           color={highlightBorderColor}
-        ></HighlightArea>
+        ></TableRowCellHighlight>
         <TouchableOpacity
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", overflow: "hidden" }}
           onPress={onPress}
         >
           {renderCell({
@@ -76,38 +78,5 @@ export function TableRowCell({
         ></ColumnSeperater>
       </Animated.View>
     </>
-  );
-}
-
-function HighlightArea({ visible, color }: { visible: boolean; color: any }) {
-  return (
-    <View
-      style={[
-        {
-          display: visible ? "flex" : "none",
-          zIndex: 0,
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          borderWidth: 2,
-          top: 0,
-          left: 0,
-          borderColor: color,
-        },
-      ]}
-    >
-      <View
-        style={[
-          {
-            width: "100%",
-            height: "100%",
-            borderWidth: 3,
-            top: 0,
-            left: 0,
-            borderColor: "#fff",
-          },
-        ]}
-      ></View>
-    </View>
   );
 }

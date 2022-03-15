@@ -39,6 +39,7 @@ type TableContextState = {
    * 表格容器宽度
    */
   tableWidth: number;
+  tailCellWidth: number;
 };
 
 export const TableContext = createContext({} as TableContextState);
