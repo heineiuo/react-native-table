@@ -58,16 +58,14 @@ export function TableHeadCell({
         style={[
           {
             overflow: "hidden",
-            zIndex: 5,
+            zIndex: -1,
             borderColor,
             borderBottomWidth: 1,
             height: rowHeight,
-            position: "absolute",
+            // position: "absolute",
             top: 0,
             alignItems: "center",
-          },
-          {
-            left: field.leftValue,
+            // left: field.leftValue,
             width: field.widthValue,
           },
         ]}

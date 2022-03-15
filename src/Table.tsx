@@ -191,7 +191,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
   }, []);
 
   const value = useMemo(() => {
-    let totalWidthValue = new Animated.Value(indexCellWidth);
+    let totalWidthValue = new Animated.Value(indexCellWidth + tailCellWidth);
     for (const field of internalFields) {
       totalWidthValue = Animated.add(
         totalWidthValue,
@@ -200,6 +200,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     }
 
     return {
+      tailCellWidth,
       panController,
       resizerWidth,
       resizeable,
@@ -225,6 +226,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       tableWidth,
     };
   }, [
+    tailCellWidth,
     reIndex,
     panController,
     rowHeight,

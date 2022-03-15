@@ -27,7 +27,7 @@ export function ColumnSeperater(
             inputRange: [0, 1],
             outputRange: [-10, 10],
           }),
-          left: Animated.subtract(field.rightValue, resizerWidth / 2),
+          right: -resizerWidth / 2,
         },
       ]}
     >

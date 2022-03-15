@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, ReactNode, useEffect } from "react";
+import React, { useRef, useMemo, ReactNode } from "react";
 import { Animated, PanResponder } from "react-native";
 import { useTable } from "./TableContext";
 
@@ -12,16 +12,13 @@ export function ColumnReindexer({
   children: ReactNode;
 }) {
   const { fields, rowHeight, panController, reIndex } = useTable();
-  const { highlightValue, widthValue, leftValue, rightValue } = field;
+  const { widthValue, leftValue } = field;
   const opacityValue = useRef(new Animated.Value(1)).current;
   const startPosition = useRef(0);
 
   const panResponder = useMemo(() => {
     return PanResponder.create({
       onMoveShouldSetPanResponder: (event, gestureState) => {
-        // console.log('reindexer onMoveShouldSetPanResponder:')
-        // console.log('reindexer onMoveShouldSetPanResponder', panController.current)
-
         if (!panController.current) {
           panController.current = gestureState.stateID;
           return true;
@@ -31,12 +28,10 @@ export function ColumnReindexer({
       onPanResponderGrant: (event, gestureState) => {
         opacityValue.setValue(0.4);
         const left = JSON.parse(JSON.stringify(leftValue));
-        console.log("[reindex] grant: ", left, event.nativeEvent.locationX);
+        // console.log("[reindex] grant: ", left, event.nativeEvent.locationX);
         startPosition.current = left + event.nativeEvent.locationX;
       },
       onPanResponderMove: (event, gestureState) => {
-        // console.log('reindexer onPanResponderMove', panController.current)
-
         const currentX = startPosition.current + gestureState.dx;
 
         let highlightField = null;
@@ -58,13 +53,13 @@ export function ColumnReindexer({
         opacityValue.setValue(1);
         panController.current = null;
 
-        console.log(
-          "[reindex] current fields:",
-          fields.map((field1) => field1.fieldId)
-        );
+        // console.log(
+        //   "[reindex] current fields:",
+        //   fields.map((field1) => field1.fieldId)
+        // );
 
         const currentX = startPosition.current + gestureState.dx;
-        console.log("[reindex] currentX:", currentX);
+        // console.log("[reindex] currentX:", currentX);
 
         let highlightField = null;
         let highlightIndex = -1;
@@ -83,16 +78,16 @@ export function ColumnReindexer({
         if (highlightField) {
           let toIndex = highlightIndex + 1;
           if (toIndex === index) {
-            console.log("[reindex] not change");
+            // console.log("[reindex] not change");
           } else {
             if (index < highlightIndex) {
               toIndex--;
             }
-            console.log(`[reindex] fromIndex ${index} toIndex ${toIndex}`);
+            // console.log(`[reindex] fromIndex ${index} toIndex ${toIndex}`);
             reIndex({ fromIndex: index, toIndex });
           }
         } else {
-          console.log("[reindex] not change, release at wrong position");
+          // console.log("[reindex] not change, release at wrong position");
         }
       },
     });

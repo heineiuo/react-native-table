@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { View, Animated, TouchableOpacity } from "react-native";
 import { useTable } from "./TableContext";
 import { ColumnSeperater } from "./ColumnSeperater";
+import { TableRowCellHighlight } from "./TableRowCellHighlight";
 
 export function TableRowCell({
   field,
@@ -43,48 +44,25 @@ export function TableRowCell({
         style={[
           {
             zIndex: 5,
-            position: "absolute",
-            top: 0,
+            position: "relative",
             borderColor,
             borderBottomWidth: 1,
             height: rowHeight,
-            overflow: "hidden",
             alignItems: "center",
+            width: field.widthValue,
+            /**
+             * Set overflow visible to keep seperator visible
+             */
+            overflow: "visible",
           },
-          { left: field.leftValue, width: field.widthValue },
         ]}
       >
-        {isFocused && (
-          <View
-            style={[
-              {
-                zIndex: 0,
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                borderWidth: 2,
-                top: 0,
-                left: 0,
-                borderColor: highlightBorderColor,
-              },
-            ]}
-          >
-            <View
-              style={[
-                {
-                  width: "100%",
-                  height: "100%",
-                  borderWidth: 3,
-                  top: 0,
-                  left: 0,
-                  borderColor: "#fff",
-                },
-              ]}
-            ></View>
-          </View>
-        )}
+        <TableRowCellHighlight
+          visible={isFocused}
+          color={highlightBorderColor}
+        ></TableRowCellHighlight>
         <TouchableOpacity
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", overflow: "hidden" }}
           onPress={onPress}
         >
           {renderCell({
@@ -94,8 +72,11 @@ export function TableRowCell({
             item: data,
           })}
         </TouchableOpacity>
+        <ColumnSeperater
+          field={field}
+          fieldIndex={fieldIndex}
+        ></ColumnSeperater>
       </Animated.View>
-      <ColumnSeperater field={field} fieldIndex={fieldIndex}></ColumnSeperater>
     </>
   );
 }
