@@ -30,6 +30,26 @@ type TableContextState = {
     | null
     | undefined;
   /**
+   * 自定义列头
+   */
+  TailColumnHeaderComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+
+  TailCellComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+
+  IndexCellComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+  /**
    * 最小单元格宽度
    */
   cellMinWidth: number;

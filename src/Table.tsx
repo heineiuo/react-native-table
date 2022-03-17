@@ -49,11 +49,30 @@ type TableProps = {
    * custom cell renderer
    */
   renderCell?: (options: any) => ReactNode;
+  CellComponent?: React.ComponentType<any>;
 
   /**
    * custom column header component
    */
   ColumnHeaderComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+
+  TailColumnHeaderComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+
+  TailCellComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+
+  IndexCellComponent?:
     | React.ComponentType<any>
     | React.ReactElement
     | null
@@ -92,6 +111,14 @@ type TableInstance = {
   delColumn: any;
 };
 
+function DefaultIndexCellComponent({ index }: { index: number }) {
+  return (
+    <View>
+      <Text>{index + 1}</Text>
+    </View>
+  );
+}
+
 const Table = forwardRef<TableInstance, TableProps>(function Table(
   {
     useRecyclerListView = false,
@@ -113,6 +140,9 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     cellMinWidth = 40,
     rowHoverdBackgroundColor = "#f6f8fa",
     ColumnHeaderComponent,
+    IndexCellComponent = DefaultIndexCellComponent,
+    TailCellComponent,
+    TailColumnHeaderComponent,
     renderCell,
   },
   ref
@@ -128,6 +158,38 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
         const target = nextState[fromIndex];
         nextState.splice(fromIndex, 1);
         nextState.splice(toIndex, 0, target);
+        return resetColumnPosition({
+          fields: nextState,
+          indexCellWidth,
+          cellWidth,
+          resizerWidth,
+          tailCellWidth,
+        });
+      } else if (action.type === "add-field") {
+        const nextState = state.slice();
+        const { fieldId } = action.payload;
+        const sameField = nextState.find((item) => item.fieldId === fieldId);
+        if (sameField) {
+          return nextState;
+        }
+        nextState.push(action.payload);
+        return resetColumnPosition({
+          fields: nextState,
+          indexCellWidth,
+          cellWidth,
+          resizerWidth,
+          tailCellWidth,
+        });
+      } else if (action.type === "del-field") {
+        const nextState = state.slice();
+        const { fieldId } = action.payload;
+        const sameFieldIndex = nextState.findIndex(
+          (item) => item.fieldId === fieldId
+        );
+        if (sameFieldIndex === -1) {
+          return nextState;
+        }
+        nextState.split(sameFieldIndex, 1);
         return resetColumnPosition({
           fields: nextState,
           indexCellWidth,
@@ -226,6 +288,9 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       cellMinWidth,
       renderCell: internalRenderCell,
       ColumnHeaderComponent,
+      TailColumnHeaderComponent,
+      TailCellComponent,
+      IndexCellComponent,
       tailCellLeftValue,
       resizeMode,
       tableWidth,
@@ -248,10 +313,12 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     focusedField,
     focusedRow,
     indexCellWidth,
-
+    TailColumnHeaderComponent,
+    TailCellComponent,
     tailCellLeftValue,
     cellMinWidth,
     internalRenderCell,
+    IndexCellComponent,
     ColumnHeaderComponent,
     tableWidth,
     resizeMode,
@@ -302,6 +369,8 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     </TableContext.Provider>
   );
 });
+
+Table.displayName = "Table";
 
 export { useTable, Table };
 export type { TableInstance, TableProps };
