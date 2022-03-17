@@ -42,6 +42,7 @@ export function TableWithFlatList({
       getItemLayout={(data, index) => {
         return { length: rowHeight, offset: rowHeight * index, index };
       }}
+      maxToRenderPerBatch={1}
       disableVirtualization={false}
       stickyHeaderIndices={[0]}
       ListHeaderComponent={TableHead}

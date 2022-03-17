@@ -9,6 +9,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   createElement,
+  RefObject,
 } from "react";
 import { Animated, Text, View } from "react-native";
 import { useTable, TableContext } from "./TableContext";
@@ -214,17 +215,15 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
   );
 
   const panController = useRef({}).current;
-  const [focusedRow, setFocusedRow] = useState(null);
-  const [focusedField, setFocusedField] = useState(null);
   const [userSelect] = useState("none");
+  const focusedCell = useRef<any>();
 
-  const focusCell = useCallback(
-    ({ fieldId, rowId }: { fieldId: string; rowId: string }) => {
-      setFocusedField(fieldId);
-      setFocusedRow(rowId);
-    },
-    []
-  );
+  const focusCell = useCallback(({ cellRef }: { cellRef: RefObject<any> }) => {
+    if (focusedCell.current) {
+      focusedCell.current.blur();
+    }
+    focusedCell.current = cellRef.current;
+  }, []);
 
   const reIndex = useCallback(
     (payload: { fromIndex: number; toIndex: number }) => {
@@ -280,8 +279,6 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       rowHoverdBackgroundColor,
       rowHeight,
       focusCell,
-      focusedField,
-      focusedRow,
       indexCellWidth,
       reIndex,
       totalWidthValue,
@@ -310,8 +307,6 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     highlightBorderColor,
     rowHoverdBackgroundColor,
     focusCell,
-    focusedField,
-    focusedRow,
     indexCellWidth,
     TailColumnHeaderComponent,
     TailCellComponent,
