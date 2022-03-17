@@ -80,13 +80,15 @@ export default function App() {
       </View>
 
       <Table
+        cellWidth={400}
         ref={tableRef}
+        // useRecyclerListView
         highlightBorderColor="blue"
         style={{
           overflowX: "hidden",
           margin: 10,
           width: width - 40,
-          height: height - 20,
+          height: height - 40,
         }}
         fields={fields}
         data={data}
