@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Animated,
   Platform,
@@ -48,6 +54,13 @@ export default function App() {
     return Animated.add(Animated.add(val1.current, val2.current), val4.current);
   }, []);
 
+  const addColumn = useCallback(() => {
+    tableRef.current.addColumn({
+      fieldId: `f${fields.length + 1}`,
+      title: `Fileds${fields.length + 1}`,
+    });
+  }, [fields]);
+
   useEffect(() => {
     if (Platform.OS === "web") {
       document.body.style.overflow = "hidden";
@@ -92,6 +105,31 @@ export default function App() {
         }}
         fields={fields}
         data={data}
+        IndexCellComponent={({ index }) => {
+          return (
+            <View>
+              <Text numberOfLines={1} style={{}}>
+                &gt;{index + 1}
+              </Text>
+            </View>
+          );
+        }}
+        TailCellComponent={() => {
+          return (
+            <View>
+              <Text>[]</Text>
+            </View>
+          );
+        }}
+        TailColumnHeaderComponent={() => {
+          return (
+            <View>
+              <TouchableOpacity onPress={addColumn}>
+                <Text>Add column</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        }}
         ColumnHeaderComponent={({ column }) => {
           return (
             <View

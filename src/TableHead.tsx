@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { View, Animated } from "react-native";
 import { useTable } from "./TableContext";
 import { TableHeadCell } from "./TableHeadCell";
@@ -13,7 +13,18 @@ export function TableHead() {
     tailCellWidth,
     resizeable,
     tableWidth,
+    TailColumnHeaderComponent,
   } = useTable();
+
+  let tailCell: ReactNode = null;
+
+  if (TailColumnHeaderComponent) {
+    if ("type" in TailColumnHeaderComponent) {
+      tailCell = TailColumnHeaderComponent;
+    } else {
+      tailCell = <TailColumnHeaderComponent></TailColumnHeaderComponent>;
+    }
+  }
 
   return (
     <Animated.View
@@ -52,7 +63,9 @@ export function TableHead() {
           minWidth: tailCellWidth,
           height: rowHeight,
         }}
-      ></Animated.View>
+      >
+        {tailCell}
+      </Animated.View>
     </Animated.View>
   );
 }
