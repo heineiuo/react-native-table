@@ -223,6 +223,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       focusedCell.current.blur();
     }
     focusedCell.current = cellRef.current;
+    focusedCell.current.focus();
   }, []);
 
   const reIndex = useCallback(
@@ -328,8 +329,12 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       function delColumn(payload) {
         dispatch({ type: "del-field", payload });
       }
+      function getFocusedCell(payload) {}
+      function focuseCell(payload) {}
 
       return {
+        getFocusedCell,
+        focuseCell,
         addColumn,
         delColumn,
       };

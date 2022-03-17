@@ -40,12 +40,14 @@ export function TableRowCell({
     blur() {
       setIsFocused(false);
     },
+    focus() {
+      setIsFocused(true);
+    },
   });
 
   const onPress = useCallback(() => {
-    setIsFocused(true);
     focusCell({ cellRef });
-  }, [focusCell, field.fieldId, rowId]);
+  }, [focusCell]);
 
   return (
     <>
