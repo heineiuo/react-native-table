@@ -8,6 +8,7 @@ import React, {
   ReactNode,
   forwardRef,
   useImperativeHandle,
+  createElement,
 } from "react";
 import { Animated, Text, View } from "react-native";
 import { useTable, TableContext } from "./TableContext";
@@ -15,6 +16,8 @@ import { TableHead } from "./TableHead";
 import { TableRow } from "./TableRow";
 import { TableResizeMode } from "./TableTypes";
 import { resetColumnPosition } from "./TableUtils";
+import { TableWithFlatList } from "./TableWithFlatList";
+import { TableWithRecyclerListView } from "./TableWithRecyclerListView";
 
 type FieldsChangeFunc = (fields: {}[]) => void;
 
@@ -81,6 +84,7 @@ type TableProps = {
    * 悬浮行背景颜色
    */
   rowHoverdBackgroundColor?: string;
+  useRecyclerListView?: boolean;
 };
 
 type TableInstance = {
@@ -90,6 +94,7 @@ type TableInstance = {
 
 const Table = forwardRef<TableInstance, TableProps>(function Table(
   {
+    useRecyclerListView = false,
     initialColumns,
     fields,
     resizeMode = "increase-total-width",
@@ -275,35 +280,25 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       onValueChange(value);
     }
   }, [value, onValueChange]);
+
   return (
     <TableContext.Provider value={value}>
-      <Animated.FlatList
-        onLayout={onLayout}
-        style={[
-          {
-            userSelect,
-            overflow: "auto",
-            borderRadius: 2,
-            borderColor,
-            borderTopWidth: 1,
-            borderRightWidth: 1,
-            borderLeftWidth: 1,
-            borderBottomWidth: 1,
-          },
+      {createElement(
+        useRecyclerListView ? TableWithRecyclerListView : TableWithFlatList,
+        {
+          borderColor,
+          userSelect,
+          onLayout,
           style,
-        ]}
-        getItemLayout={(data, index) => {
-          return { length: rowHeight, offset: rowHeight * index, index };
-        }}
-        disableVirtualization={false}
-        stickyHeaderIndices={[0]}
-        ListHeaderComponent={TableHead}
-        keyExtractor={keyExtractor}
-        data={data}
-        renderItem={(data) => {
-          return <TableRow {...data}></TableRow>;
-        }}
-      ></Animated.FlatList>
+          data,
+          rowHeight,
+          TableHead,
+          keyExtractor,
+          renderItem: (data: any) => {
+            return <TableRow {...data}></TableRow>;
+          },
+        }
+      )}
     </TableContext.Provider>
   );
 });
