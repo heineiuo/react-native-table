@@ -11,7 +11,7 @@ import {
 import { Table, TableInstance } from "./src/Table";
 
 const sampleData = () =>
-  Array.from({ length: 100000 }, (v, k) => {
+  Array.from({ length: 1000 }, (v, k) => {
     return {
       id: `id${k}`,
       fields: [
@@ -85,7 +85,6 @@ export default function App() {
         // useRecyclerListView
         highlightBorderColor="blue"
         style={{
-          overflowX: "hidden",
           margin: 10,
           width: width - 40,
           height: height - 40,

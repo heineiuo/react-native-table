@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo } from "react";
+import React, {
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { View, Animated, TouchableOpacity } from "react-native";
 import { useTable } from "./TableContext";
 import { ColumnSeperater } from "./ColumnSeperater";
@@ -22,21 +28,24 @@ export function TableRowCell({
     borderColor,
     highlightBorderColor,
     rowHeight,
-    focusedField,
-    focusedRow,
     renderCell,
     keyExtractor,
     fields,
     indexCellWidth,
   } = useTable();
 
-  const onPress = useCallback(() => {
-    focusCell({ fieldId: field.fieldId, rowId });
-  }, [focusCell, field.fieldId, rowId]);
+  const [isFocused, setIsFocused] = useState(false);
 
-  const isFocused = useMemo(() => {
-    return focusedRow === rowId && focusedField === field.fieldId;
-  }, [focusedRow, focusedField, rowId, field.fieldId]);
+  const cellRef = useRef({
+    blur() {
+      setIsFocused(false);
+    },
+  });
+
+  const onPress = useCallback(() => {
+    setIsFocused(true);
+    focusCell({ cellRef });
+  }, [focusCell, field.fieldId, rowId]);
 
   return (
     <>

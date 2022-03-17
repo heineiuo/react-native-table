@@ -17,8 +17,6 @@ type TableContextState = {
   rowHoverdBackgroundColor: any;
   rowHeight: number;
   focusCell: (options: any) => void;
-  focusedField: string | null;
-  focusedRow: string | null;
   indexCellWidth: number;
   reIndex: (options: { fromIndex: number; toIndex: number }) => void;
   /**
