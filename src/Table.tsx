@@ -18,7 +18,7 @@ import { TableRow } from "./TableRow";
 import { TableInstance, TableProps, TableResizeMode } from "./TableTypes";
 import { resetColumnPosition } from "./TableUtils";
 import { TableWithFlatList } from "./TableWithFlatList";
-import { TableWithRecyclerListView } from "./TableWithRecyclerListView";
+// import { TableWithRecyclerListView } from "./TableWithRecyclerListView";
 
 const Table = forwardRef<TableInstance, TableProps>(function Table(
   {
@@ -251,7 +251,8 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
   return (
     <TableContext.Provider value={value}>
       {createElement(
-        useRecyclerListView ? TableWithRecyclerListView : TableWithFlatList,
+        // useRecyclerListView ? TableWithRecyclerListView : TableWithFlatList,
+        TableWithFlatList,
         {
           borderColor,
           userSelect,

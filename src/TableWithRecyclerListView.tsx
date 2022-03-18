@@ -6,13 +6,15 @@ import React, {
   useState,
 } from "react";
 import { Animated, Text, View } from "react-native";
-import {
-  RecyclerListView,
-  DataProvider,
-  LayoutProvider,
-} from "recyclerlistview";
-import StickyContainer from "recyclerlistview/sticky";
+// import {
+//   RecyclerListView,
+//   DataProvider,
+//   LayoutProvider,
+// } from "recyclerlistview";
+// import StickyContainer from "recyclerlistview/sticky";
 import { useTable } from "./TableContext";
+
+let RecyclerListView, DataProvider, LayoutProvider, StickyContainer;
 
 const AnimatedRecyclerListView =
   Animated.createAnimatedComponent(RecyclerListView);
