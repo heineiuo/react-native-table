@@ -22,7 +22,11 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
   }, [keyExtractor, item]);
 
   let tailCell: ReactNode = null;
-  let indexCell: ReactNode = null;
+  let indexCell: ReactNode = (
+    <View>
+      <Text>{index + 1}</Text>
+    </View>
+  );
 
   if (TailCellComponent) {
     if ("type" in TailCellComponent) {

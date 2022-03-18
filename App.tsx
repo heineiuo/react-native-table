@@ -14,7 +14,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { Table, TableInstance } from "./src/Table";
+import { Table, TableInstance } from "./src/index";
 
 const sampleData = () =>
   Array.from({ length: 1000 }, (v, k) => {

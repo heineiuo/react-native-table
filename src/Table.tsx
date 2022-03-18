@@ -15,110 +15,10 @@ import { Animated, Text, View } from "react-native";
 import { useTable, TableContext } from "./TableContext";
 import { TableHead } from "./TableHead";
 import { TableRow } from "./TableRow";
-import { TableResizeMode } from "./TableTypes";
+import { TableInstance, TableProps, TableResizeMode } from "./TableTypes";
 import { resetColumnPosition } from "./TableUtils";
 import { TableWithFlatList } from "./TableWithFlatList";
 import { TableWithRecyclerListView } from "./TableWithRecyclerListView";
-
-type FieldsChangeFunc = (fields: {}[]) => void;
-
-type TableProps = {
-  /**
-   * 行高
-   */
-  rowHeight?: number;
-  /**
-   * 单元格宽度
-   */
-  cellWidth?: number;
-  /**
-   * 最小单元格宽度
-   */
-  cellMinWidth?: number;
-  /**
-   * The widget width of column resizer
-   */
-  resizerWidth?: number;
-  style?: any;
-  keyExtractor?: any;
-  resizeable?: boolean;
-  onValueChange?: any;
-
-  resizeMode?: TableResizeMode;
-
-  /**
-   * custom cell renderer
-   */
-  renderCell?: (options: any) => ReactNode;
-  CellComponent?: React.ComponentType<any>;
-
-  /**
-   * custom column header component
-   */
-  ColumnHeaderComponent?:
-    | React.ComponentType<any>
-    | React.ReactElement
-    | null
-    | undefined;
-
-  TailColumnHeaderComponent?:
-    | React.ComponentType<any>
-    | React.ReactElement
-    | null
-    | undefined;
-
-  TailCellComponent?:
-    | React.ComponentType<any>
-    | React.ReactElement
-    | null
-    | undefined;
-
-  IndexCellComponent?:
-    | React.ComponentType<any>
-    | React.ReactElement
-    | null
-    | undefined;
-
-  /**
-   * border color
-   */
-  borderColor?: string;
-  /**
-   * highlight cell's border color
-   */
-  highlightBorderColor?: string;
-  /**
-   * @deprecated Use initialColumns instead
-   * columns
-   */
-  fields?: any[];
-
-  initialColumns?: any[];
-  data: any[];
-  /**
-   * 序号单元格宽度
-   */
-  indexCellWidth?: number;
-  tailCellWidth?: number;
-  /**
-   * 悬浮行背景颜色
-   */
-  rowHoverdBackgroundColor?: string;
-  useRecyclerListView?: boolean;
-};
-
-type TableInstance = {
-  addColumn: any;
-  delColumn: any;
-};
-
-function DefaultIndexCellComponent({ index }: { index: number }) {
-  return (
-    <View>
-      <Text>{index + 1}</Text>
-    </View>
-  );
-}
 
 const Table = forwardRef<TableInstance, TableProps>(function Table(
   {
@@ -141,7 +41,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     cellMinWidth = 40,
     rowHoverdBackgroundColor = "#f6f8fa",
     ColumnHeaderComponent,
-    IndexCellComponent = DefaultIndexCellComponent,
+    IndexCellComponent,
     TailCellComponent,
     TailColumnHeaderComponent,
     renderCell,
@@ -372,5 +272,4 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
 
 Table.displayName = "Table";
 
-export { useTable, Table };
-export type { TableInstance, TableProps };
+export { Table };
