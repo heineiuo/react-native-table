@@ -69,6 +69,18 @@ export type TableContextState = {
     | React.ReactElement
     | null
     | undefined;
+
+  FooterCellComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+
+  FooterIndexCellComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
   /**
    * 最小单元格宽度
    */
@@ -145,6 +157,17 @@ export type TableProps = {
     | null
     | undefined;
 
+  FooterCellComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
+
+  FooterIndexCellComponent?:
+    | React.ComponentType<any>
+    | React.ReactElement
+    | null
+    | undefined;
   /**
    * border color
    */
