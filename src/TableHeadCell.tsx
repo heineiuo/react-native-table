@@ -1,13 +1,6 @@
-import React, {
-  useRef,
-  useState,
-  useReducer,
-  useCallback,
-  useMemo,
-  useEffect,
-} from "react";
+import React from "react";
 import { Text, View, Animated } from "react-native";
-import { TableContext, useTable } from "./TableContext";
+import { useTable } from "./TableContext";
 import { ColumnResizer } from "./ColumnResizer";
 import { ColumnReindexer } from "./ColumnReindexer";
 
@@ -20,14 +13,7 @@ export function TableHeadCell({
   field: any;
   index: number;
 }) {
-  const {
-    fields,
-    rowHeight,
-    borderColor,
-    ColumnHeaderComponent,
-    indexCellWidth,
-  } = useTable();
-  // const prevField = fields[index - 1] ?? null;
+  const { rowHeight, borderColor, ColumnHeaderComponent } = useTable();
 
   let header = (
     <View
@@ -62,10 +48,8 @@ export function TableHeadCell({
             borderColor,
             borderBottomWidth: 1,
             height: rowHeight,
-            // position: "absolute",
             top: 0,
             alignItems: "center",
-            // left: field.leftValue,
             width: field.widthValue,
           },
         ]}

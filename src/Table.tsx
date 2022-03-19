@@ -43,6 +43,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     ColumnHeaderComponent,
     IndexCellComponent,
     TailCellComponent,
+    HeadColumnHeaderComponent,
     TailColumnHeaderComponent,
     renderCell,
   },
@@ -187,6 +188,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       renderCell: internalRenderCell,
       ColumnHeaderComponent,
       TailColumnHeaderComponent,
+      HeadColumnHeaderComponent,
       TailCellComponent,
       IndexCellComponent,
       tailCellLeftValue,
@@ -216,6 +218,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     internalRenderCell,
     IndexCellComponent,
     ColumnHeaderComponent,
+    HeadColumnHeaderComponent,
     tableWidth,
     resizeMode,
   ]);

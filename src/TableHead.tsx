@@ -13,16 +13,26 @@ export function TableHead() {
     tailCellWidth,
     resizeable,
     tableWidth,
+    HeadColumnHeaderComponent,
     TailColumnHeaderComponent,
   } = useTable();
 
   let tailCell: ReactNode = null;
+  let headCell: ReactNode = null;
 
   if (TailColumnHeaderComponent) {
     if ("type" in TailColumnHeaderComponent) {
       tailCell = TailColumnHeaderComponent;
     } else {
       tailCell = <TailColumnHeaderComponent></TailColumnHeaderComponent>;
+    }
+  }
+
+  if (HeadColumnHeaderComponent) {
+    if ("type" in HeadColumnHeaderComponent) {
+      headCell = HeadColumnHeaderComponent;
+    } else {
+      headCell = <HeadColumnHeaderComponent></HeadColumnHeaderComponent>;
     }
   }
 
@@ -47,7 +57,9 @@ export function TableHead() {
           height: rowHeight,
           width: indexCellWidth,
         }}
-      ></View>
+      >
+        {headCell}
+      </View>
       {fields.map((field, index) => {
         return (
           <TableHeadCell
