@@ -149,6 +149,20 @@ export default function App() {
             </View>
           );
         }}
+        FooterIndexCellComponent={() => {
+          return (
+            <View>
+              <Text>+</Text>
+            </View>
+          );
+        }}
+        FooterCellComponent={() => {
+          return (
+            <View>
+              <Text>...</Text>
+            </View>
+          );
+        }}
         renderCell={({ item }) => {
           return (
             <View
