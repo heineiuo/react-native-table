@@ -120,6 +120,15 @@ export default function App() {
             </View>
           );
         }}
+        HeadColumnHeaderComponent={() => {
+          return (
+            <View>
+              <TouchableOpacity onPress={addColumn}>
+                <Text>o</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        }}
         TailColumnHeaderComponent={() => {
           return (
             <View>
