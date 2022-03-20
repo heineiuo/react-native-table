@@ -45,7 +45,7 @@ export function TableRowCell({
     },
   });
 
-  const onPress = useCallback(() => {
+  const focus = useCallback(() => {
     focusCell({ cellRef });
   }, [focusCell]);
 
@@ -71,10 +71,11 @@ export function TableRowCell({
         <TableRowCellHighlight visible={focused} color={highlightBorderColor} />
         <TouchableOpacity
           style={{ width: "100%", height: "100%", overflow: "hidden" }}
-          onPress={onPress}
+          onPress={focus}
         >
           {renderCell({
             focused,
+            focus,
             hovered,
             pressed,
             column,
