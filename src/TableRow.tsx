@@ -86,18 +86,20 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
         >
           {indexCell}
         </View>
-        {columns.map((field, fieldIndex) => {
+        {columns.map((column, columnIndex) => {
+          const columnId = columnKeyExtractor(column);
           const data = cellsExtractor(item).find(
-            (cell) => columnKeyExtractor(cell) === columnKeyExtractor(field)
+            (cell: any) => columnKeyExtractor(cell) === columnId
           );
           return (
             <TableRowCell
-              column={field}
+              column={column}
               rowId={rowId}
-              index={index}
-              fieldIndex={fieldIndex}
-              data={data ?? {}}
-              key={columnKeyExtractor(field)}
+              row={item}
+              rowIndex={index}
+              columnIndex={columnIndex}
+              data={data}
+              key={columnId}
             />
           );
         })}

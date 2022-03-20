@@ -3,10 +3,13 @@ import { StyleSheet, Animated } from "react-native";
 
 import { useTable } from "./TableContext";
 
-export function ColumnSeperater(
-  { column, fieldIndex },
-  { field: any, fieldIndex: number }
-) {
+export function ColumnSeperater({
+  column,
+  columnIndex,
+}: {
+  column: any;
+  columnIndex: number;
+}) {
   const {
     rowHeight,
     resizerWidth,

@@ -1,11 +1,5 @@
-import React, {
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { View, Animated, TouchableOpacity } from "react-native";
+import React, { useCallback, useRef, useState } from "react";
+import { Animated, TouchableOpacity } from "react-native";
 
 import { ColumnSeperater } from "./ColumnSeperater";
 import { useTable } from "./TableContext";
@@ -13,16 +7,19 @@ import { TableRowCellHighlight } from "./TableRowCellHighlight";
 
 export function TableRowCell({
   column,
-  fieldIndex,
+  row,
+  columnIndex,
+  rowIndex,
   data,
   rowId,
 }: {
   rowId: string;
-  data: any;
+  data?: any;
   resizeable?: boolean;
   column: any;
-  fieldIndex: number;
-  index: number;
+  row: any;
+  columnIndex: number;
+  rowIndex: number;
 }) {
   const {
     focusCell,
@@ -76,13 +73,16 @@ export function TableRowCell({
           onPress={onPress}
         >
           {renderCell({
+            column,
             columnId: columnKeyExtractor(column),
-            fieldId: columnKeyExtractor(column),
+            columnIndex,
+            row,
             rowId,
+            rowIndex,
             item: data,
           })}
         </TouchableOpacity>
-        <ColumnSeperater column={column} fieldIndex={fieldIndex} />
+        <ColumnSeperater column={column} columnIndex={columnIndex} />
       </Animated.View>
     </>
   );
