@@ -21,7 +21,7 @@ export function resetColumnPosition({
 
   for (const field of fields) {
     const left = prevRight;
-    let width = cellWidth;
+    const width = cellWidth;
     prevRight += width;
 
     const result = {

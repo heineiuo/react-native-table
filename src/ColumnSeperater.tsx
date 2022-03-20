@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Animated } from "react-native";
+
 import { useTable } from "./TableContext";
 
 export function ColumnSeperater(
@@ -45,7 +46,7 @@ export function ColumnSeperater(
             }),
           },
         ]}
-      ></Animated.View>
+      />
     </Animated.View>
   );
 }

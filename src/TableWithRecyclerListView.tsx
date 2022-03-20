@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { Animated, Text, View } from "react-native";
+
 // import {
 //   RecyclerListView,
 //   DataProvider,
@@ -110,7 +111,7 @@ export function TableWithRecyclerListView({
     if (index === 0) {
       return (
         <View style={{ zIndex: -100 }}>
-          <TableHead></TableHead>
+          <TableHead />
         </View>
       );
     }

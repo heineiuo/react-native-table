@@ -1,8 +1,9 @@
 import React from "react";
 import { Text, View, Animated } from "react-native";
-import { useTable } from "./TableContext";
-import { ColumnResizer } from "./ColumnResizer";
+
 import { ColumnReindexer } from "./ColumnReindexer";
+import { ColumnResizer } from "./ColumnResizer";
+import { useTable } from "./TableContext";
 
 export function TableHeadCell({
   resizeable = false,
@@ -29,12 +30,7 @@ export function TableHeadCell({
     if ("type" in ColumnHeaderComponent) {
       header = ColumnHeaderComponent;
     } else {
-      header = (
-        <ColumnHeaderComponent
-          column={field}
-          field={field}
-        ></ColumnHeaderComponent>
-      );
+      header = <ColumnHeaderComponent column={field} field={field} />;
     }
   }
 
@@ -58,11 +54,7 @@ export function TableHeadCell({
           {header}
         </ColumnReindexer>
       </Animated.View>
-      <ColumnResizer
-        resizeable={resizeable}
-        field={field}
-        index={index}
-      ></ColumnResizer>
+      <ColumnResizer resizeable={resizeable} field={field} index={index} />
     </>
   );
 }

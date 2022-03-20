@@ -12,6 +12,7 @@ import React, {
   RefObject,
 } from "react";
 import { Animated, Text, View } from "react-native";
+
 import { useTable, TableContext } from "./TableContext";
 import { TableHead } from "./TableHead";
 import { TableRow } from "./TableRow";
@@ -48,6 +49,9 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     FooterIndexCellComponent,
     FooterCellComponent,
     renderCell,
+    onEndReached,
+    onEndReachedThreshold,
+    onLayout,
   },
   ref
 ) {
@@ -154,13 +158,19 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     [renderCell]
   );
 
-  const onLayout = useCallback((e) => {
-    const tableWidth = e.nativeEvent.layout.width;
-    setTableWidth(tableWidth);
-    dispatch({ type: "update-width", payload: { tableWidth } });
-  }, []);
+  const handleLayout = useCallback(
+    (e) => {
+      const tableWidth = e.nativeEvent.layout.width;
+      setTableWidth(tableWidth);
+      dispatch({ type: "update-width", payload: { tableWidth } });
+      if (onLayout) {
+        onLayout(e);
+      }
+    },
+    [onLayout]
+  );
 
-  const value = useMemo(() => {
+  const totalWidthValue = useMemo(() => {
     let totalWidthValue = new Animated.Value(indexCellWidth + tailCellWidth);
     for (const field of internalFields) {
       totalWidthValue = Animated.add(
@@ -169,13 +179,16 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       ) as Animated.Value;
     }
 
+    return totalWidthValue;
+  }, [internalFields, indexCellWidth, tailCellWidth]);
+
+  const value = useMemo(() => {
     return {
       tailCellWidth,
       panController,
       resizerWidth,
       resizeable,
       fields: internalFields,
-      data,
       keyExtractor,
       cellWidth,
       borderColor,
@@ -209,7 +222,6 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     resizerWidth,
     internalFields,
     resizeable,
-    data,
     keyExtractor,
     highlightBorderColor,
     rowHoverdBackgroundColor,
@@ -225,6 +237,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     HeadColumnHeaderComponent,
     FooterIndexCellComponent,
     FooterCellComponent,
+    totalWidthValue,
     tableWidth,
     resizeMode,
   ]);
@@ -263,16 +276,18 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
         // useRecyclerListView ? TableWithRecyclerListView : TableWithFlatList,
         TableWithFlatList,
         {
+          onEndReached,
           borderColor,
           userSelect,
-          onLayout,
+          onLayout: handleLayout,
           style,
           data,
           rowHeight,
           TableHead,
           keyExtractor,
+          onEndReachedThreshold,
           renderItem: (data: any) => {
-            return <TableRow {...data}></TableRow>;
+            return <TableRow {...data} />;
           },
         }
       )}

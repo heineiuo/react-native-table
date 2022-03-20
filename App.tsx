@@ -14,6 +14,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+
 import { Table, TableInstance } from "./src/index";
 
 const sampleData = () =>
@@ -61,6 +62,10 @@ export default function App() {
     });
   }, [fields]);
 
+  const onEndReached = useCallback(() => {
+    console.log("onEndReached");
+  }, []);
+
   useEffect(() => {
     if (Platform.OS === "web") {
       document.body.style.overflow = "hidden";
@@ -89,7 +94,7 @@ export default function App() {
             height: 10,
             width: val3,
           }}
-        ></Animated.View>
+        />
       </View>
 
       <Table
@@ -192,7 +197,8 @@ export default function App() {
             </View>
           );
         }}
-      ></Table>
+        onEndReached={onEndReached}
+      />
     </SafeAreaView>
   );
 }

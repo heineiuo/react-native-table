@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Animated } from "react-native";
+import { Animated, FlatListProps } from "react-native";
 
 /**
  * The total width change mode when resizing
@@ -20,6 +20,19 @@ export type InternalField = {
   widthValue: Animated.Value;
 };
 
+export type SupportedFlatListProps = Omit<
+  FlatListProps<any>,
+  | "ItemSeparatorComponent"
+  | "ListFooterComponent"
+  | "ListFooterComponentStyle"
+  | "ListHeaderComponent"
+  | "ListHeaderComponentStyle"
+  | "columnWrapperStyle"
+  | "horizontal"
+  | "numColumns"
+  | "renderItem"
+>;
+
 export type TableContextState = {
   panController: any;
   resizerWidth: number;
@@ -27,7 +40,6 @@ export type TableContextState = {
   totalWidthValue: Animated.Value;
   tailCellLeftValue: Animated.Value;
   fields: any[];
-  data: any[];
   keyExtractor: any;
   cellWidth: number;
   borderColor: any;
@@ -94,7 +106,7 @@ export type TableContextState = {
   tailCellWidth: number;
 };
 
-export type TableProps = {
+export type TableProps = SupportedFlatListProps & {
   /**
    * 行高
    */
@@ -183,7 +195,6 @@ export type TableProps = {
   fields?: any[];
 
   initialColumns?: any[];
-  data: any[];
   /**
    * 序号单元格宽度
    */

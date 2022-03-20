@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Pressable, Animated, PanResponder } from "react-native";
+
 import { useTable } from "./TableContext";
 
 export function ColumnResizer({
@@ -185,7 +186,7 @@ export function ColumnResizer({
                   backgroundColor: highlightBorderColor,
                 },
               ]}
-            ></Animated.View>
+            />
           );
         }}
       </Pressable>

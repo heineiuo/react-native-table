@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+
 import { TableContextState } from "./TableTypes";
 
 export const TableContext = createContext({} as TableContextState);

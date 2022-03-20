@@ -1,6 +1,8 @@
-import React from "react";
-import { Animated, Text, View } from "react-native";
+import React, { useCallback } from "react";
+import { Animated } from "react-native";
+
 import { TableFooter } from "./TableFooter";
+import { SupportedFlatListProps } from "./TableTypes";
 
 export function TableWithFlatList({
   onLayout,
@@ -13,18 +15,23 @@ export function TableWithFlatList({
   data,
   renderItem,
   ListEmptyComponent,
-}: {
-  onLayout: any;
+  ...extraFlatListProps
+}: SupportedFlatListProps & {
   userSelect: any;
   borderColor: any;
   style: any;
   rowHeight: any;
   TableHead: any;
   keyExtractor: any;
-  data: any;
   renderItem: any;
-  ListEmptyComponent?: any;
 }) {
+  const getItemLayout = useCallback(
+    (_, index) => {
+      return { length: rowHeight, offset: rowHeight * index, index };
+    },
+    [rowHeight]
+  );
+
   return (
     <Animated.FlatList
       onLayout={onLayout}
@@ -42,9 +49,7 @@ export function TableWithFlatList({
         },
         style,
       ]}
-      getItemLayout={(data, index) => {
-        return { length: rowHeight, offset: rowHeight * index, index };
-      }}
+      getItemLayout={getItemLayout}
       maxToRenderPerBatch={1}
       disableVirtualization={false}
       stickyHeaderIndices={[0]}
@@ -54,6 +59,7 @@ export function TableWithFlatList({
       keyExtractor={keyExtractor}
       data={data}
       renderItem={renderItem}
-    ></Animated.FlatList>
+      {...extraFlatListProps}
+    />
   );
 }

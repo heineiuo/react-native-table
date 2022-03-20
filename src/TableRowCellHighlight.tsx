@@ -35,7 +35,7 @@ export function TableRowCellHighlight({
             borderColor: "#fff",
           },
         ]}
-      ></View>
+      />
     </View>
   );
 }

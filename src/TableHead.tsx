@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect } from "react";
 import { View, Animated } from "react-native";
+
 import { useTable } from "./TableContext";
 import { TableHeadCell } from "./TableHeadCell";
 
@@ -24,7 +25,7 @@ export function TableHead() {
     if ("type" in TailColumnHeaderComponent) {
       tailCell = TailColumnHeaderComponent;
     } else {
-      tailCell = <TailColumnHeaderComponent></TailColumnHeaderComponent>;
+      tailCell = <TailColumnHeaderComponent />;
     }
   }
 
@@ -32,7 +33,7 @@ export function TableHead() {
     if ("type" in HeadColumnHeaderComponent) {
       headCell = HeadColumnHeaderComponent;
     } else {
-      headCell = <HeadColumnHeaderComponent></HeadColumnHeaderComponent>;
+      headCell = <HeadColumnHeaderComponent />;
     }
   }
 
@@ -67,7 +68,7 @@ export function TableHead() {
             field={field}
             index={index}
             key={field.fieldId}
-          ></TableHeadCell>
+          />
         );
       })}
       <Animated.View

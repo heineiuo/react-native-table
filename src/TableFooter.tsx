@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect } from "react";
 import { View, Animated } from "react-native";
+
 import { useTable } from "./TableContext";
 
 export function TableFooter() {
@@ -20,7 +21,7 @@ export function TableFooter() {
     if ("type" in FooterIndexCellComponent) {
       indexCell = FooterIndexCellComponent;
     } else {
-      indexCell = <FooterIndexCellComponent></FooterIndexCellComponent>;
+      indexCell = <FooterIndexCellComponent />;
     }
   }
 
@@ -28,7 +29,7 @@ export function TableFooter() {
     if ("type" in FooterCellComponent) {
       footerCell = FooterCellComponent;
     } else {
-      footerCell = <FooterCellComponent></FooterCellComponent>;
+      footerCell = <FooterCellComponent />;
     }
   }
 

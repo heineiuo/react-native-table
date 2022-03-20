@@ -1,5 +1,6 @@
 import React, { ReactNode, useMemo } from "react";
 import { View, Text, Animated, Pressable } from "react-native";
+
 import { useTable } from "./TableContext";
 import { TableRowCell } from "./TableRowCell";
 
@@ -32,7 +33,7 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
     if ("type" in TailCellComponent) {
       tailCell = TailCellComponent;
     } else {
-      tailCell = <TailCellComponent index={index}></TailCellComponent>;
+      tailCell = <TailCellComponent index={index} />;
     }
   }
 
@@ -40,7 +41,7 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
     if ("type" in IndexCellComponent) {
       indexCell = IndexCellComponent;
     } else {
-      indexCell = <IndexCellComponent index={index}></IndexCellComponent>;
+      indexCell = <IndexCellComponent index={index} />;
     }
   }
 
@@ -95,7 +96,7 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
               fieldIndex={fieldIndex}
               data={data ?? {}}
               key={field.fieldId}
-            ></TableRowCell>
+            />
           );
         })}
         {tailCell}

@@ -1,5 +1,6 @@
 import React, { useRef, useMemo, ReactNode } from "react";
 import { Animated, PanResponder } from "react-native";
+
 import { useTable } from "./TableContext";
 
 export function ColumnReindexer({

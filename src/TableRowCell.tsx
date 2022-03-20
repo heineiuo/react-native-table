@@ -6,8 +6,9 @@ import React, {
   useState,
 } from "react";
 import { View, Animated, TouchableOpacity } from "react-native";
-import { useTable } from "./TableContext";
+
 import { ColumnSeperater } from "./ColumnSeperater";
+import { useTable } from "./TableContext";
 import { TableRowCellHighlight } from "./TableRowCellHighlight";
 
 export function TableRowCell({
@@ -71,7 +72,7 @@ export function TableRowCell({
         <TableRowCellHighlight
           visible={isFocused}
           color={highlightBorderColor}
-        ></TableRowCellHighlight>
+        />
         <TouchableOpacity
           style={{ width: "100%", height: "100%", overflow: "hidden" }}
           onPress={onPress}
@@ -83,10 +84,7 @@ export function TableRowCell({
             item: data,
           })}
         </TouchableOpacity>
-        <ColumnSeperater
-          field={field}
-          fieldIndex={fieldIndex}
-        ></ColumnSeperater>
+        <ColumnSeperater field={field} fieldIndex={fieldIndex} />
       </Animated.View>
     </>
   );
