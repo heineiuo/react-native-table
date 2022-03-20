@@ -12,7 +12,10 @@ export function TableRowCell({
   rowIndex,
   data,
   rowId,
+  hovered,
+  pressed,
 }: {
+  pressed: boolean;
   rowId: string;
   data?: any;
   resizeable?: boolean;
@@ -20,6 +23,7 @@ export function TableRowCell({
   row: any;
   columnIndex: number;
   rowIndex: number;
+  hovered: boolean;
 }) {
   const {
     focusCell,
@@ -30,7 +34,7 @@ export function TableRowCell({
     columnKeyExtractor,
   } = useTable();
 
-  const [isFocused, setIsFocused] = useState(false);
+  const [focused, setIsFocused] = useState(false);
 
   const cellRef = useRef({
     blur() {
@@ -64,15 +68,15 @@ export function TableRowCell({
           },
         ]}
       >
-        <TableRowCellHighlight
-          visible={isFocused}
-          color={highlightBorderColor}
-        />
+        <TableRowCellHighlight visible={focused} color={highlightBorderColor} />
         <TouchableOpacity
           style={{ width: "100%", height: "100%", overflow: "hidden" }}
           onPress={onPress}
         >
           {renderCell({
+            focused,
+            hovered,
+            pressed,
             column,
             columnId: columnKeyExtractor(column),
             columnIndex,

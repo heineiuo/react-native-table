@@ -74,36 +74,46 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
           ];
         }}
       >
-        <View
-          style={{
-            // position: "absolute",
-            left: 0,
-            top: 0,
-            padding: 4,
-            height: rowHeight,
-            width: indexCellWidth,
-          }}
-        >
-          {indexCell}
-        </View>
-        {columns.map((column, columnIndex) => {
-          const columnId = columnKeyExtractor(column);
-          const data = cellsExtractor(item).find(
-            (cell: any) => columnKeyExtractor(cell) === columnId
-          );
+        {(state) => {
+          const pressed = state.pressed;
+          const hovered = (state as unknown as any).hovered;
           return (
-            <TableRowCell
-              column={column}
-              rowId={rowId}
-              row={item}
-              rowIndex={index}
-              columnIndex={columnIndex}
-              data={data}
-              key={columnId}
-            />
+            <>
+              <View
+                style={{
+                  // position: "absolute",
+                  left: 0,
+                  top: 0,
+                  padding: 4,
+                  height: rowHeight,
+                  width: indexCellWidth,
+                }}
+              >
+                {indexCell}
+              </View>
+              {columns.map((column, columnIndex) => {
+                const columnId = columnKeyExtractor(column);
+                const data = cellsExtractor(item).find(
+                  (cell: any) => columnKeyExtractor(cell) === columnId
+                );
+                return (
+                  <TableRowCell
+                    column={column}
+                    rowId={rowId}
+                    row={item}
+                    rowIndex={index}
+                    columnIndex={columnIndex}
+                    hovered={hovered}
+                    pressed={pressed}
+                    data={data}
+                    key={columnId}
+                  />
+                );
+              })}
+              {tailCell}
+            </>
           );
-        })}
-        {tailCell}
+        }}
       </Pressable>
     </Animated.View>
   );

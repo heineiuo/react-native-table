@@ -1,6 +1,6 @@
 {
   "name": "react-native-table-plus",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "build:commonjs": "babel src --out-dir lib/commonjs --extensions '.ts,.tsx' --source-maps",
