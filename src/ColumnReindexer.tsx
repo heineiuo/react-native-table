@@ -4,19 +4,21 @@ import { Animated, PanResponder } from "react-native";
 import { useTable } from "./TableContext";
 
 export function ColumnReindexer({
-  field,
+  column,
   children,
   index,
 }: {
-  field: any;
+  column: any;
   index: number;
   children: ReactNode;
 }) {
-  const { fields, rowHeight, panController, reIndex } = useTable();
-  const { widthValue, leftValue } = field;
+  const { columns, rowHeight, panController, reIndex, columnKeyExtractor } =
+    useTable();
+  const { widthValue, leftValue } = column;
   const opacityValue = useRef(new Animated.Value(1)).current;
   const startPosition = useRef(0);
 
+  const columnKey = columnKeyExtractor(column);
   const panResponder = useMemo(() => {
     return PanResponder.create({
       onMoveShouldSetPanResponder: (event, gestureState) => {
@@ -36,7 +38,7 @@ export function ColumnReindexer({
         const currentX = startPosition.current + gestureState.dx;
 
         let highlightField = null;
-        for (const field1 of fields) {
+        for (const field1 of columns) {
           if (highlightField) {
             field1.highlightValue.setValue(0);
           } else {
@@ -54,19 +56,13 @@ export function ColumnReindexer({
         opacityValue.setValue(1);
         panController.current = null;
 
-        // console.log(
-        //   "[reindex] current fields:",
-        //   fields.map((field1) => field1.fieldId)
-        // );
-
         const currentX = startPosition.current + gestureState.dx;
-        // console.log("[reindex] currentX:", currentX);
 
         let highlightField = null;
         let highlightIndex = -1;
         let i = 0;
-        for (const field1 of fields) {
-          if (!highlightField && field1.fieldId !== field.fieldId) {
+        for (const field1 of columns) {
+          if (!highlightField && columnKeyExtractor(field1) !== columnKey) {
             const field1Right = JSON.parse(JSON.stringify(field1.rightValue));
             if (Math.abs(field1Right - currentX) < 50) {
               highlightField = field1;
@@ -93,9 +89,10 @@ export function ColumnReindexer({
       },
     });
   }, [
-    fields,
+    columns,
     panController,
-    field.fieldId,
+    columnKey,
+    columnKeyExtractor,
     index,
     leftValue,
     opacityValue,

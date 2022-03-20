@@ -14,7 +14,6 @@ import { Animated, FlatListProps } from "react-native";
 export type TableResizeMode = "keep-total-width" | "increase-total-width";
 
 export type InternalField = {
-  fieldId: string;
   title: string;
   leftValue: Animated.Value;
   widthValue: Animated.Value;
@@ -39,8 +38,12 @@ export type TableContextState = {
   resizeable: boolean;
   totalWidthValue: Animated.Value;
   tailCellLeftValue: Animated.Value;
-  fields: any[];
+  columns: any[];
   keyExtractor: any;
+  // key of column
+  columnKeyExtractor: any;
+  // cells key of row
+  cellsExtractor: any;
   cellWidth: number;
   borderColor: any;
   highlightBorderColor: any;
@@ -124,7 +127,10 @@ export type TableProps = SupportedFlatListProps & {
    */
   resizerWidth?: number;
   style?: any;
-  keyExtractor?: any;
+  // key of column
+  columnKeyExtractor?: any;
+  // key of cells
+  cellsExtractor?: any;
   resizeable?: boolean;
   onValueChange?: any;
 
@@ -188,11 +194,6 @@ export type TableProps = SupportedFlatListProps & {
    * highlight cell's border color
    */
   highlightBorderColor?: string;
-  /**
-   * @deprecated Use initialColumns instead
-   * columns
-   */
-  fields?: any[];
 
   initialColumns?: any[];
   /**

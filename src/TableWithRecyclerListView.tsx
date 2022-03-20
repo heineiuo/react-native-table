@@ -141,10 +141,10 @@ export function TableWithRecyclerListView({
         useWindowScroll
         rowRenderer={rowRenderer}
         dataProvider={dataProvider.cloneWithRows([
-          { id: "id", fields: [] },
+          { id: "id", cells: [] },
           {
             id: "id__1",
-            fields: [
+            cells: [
               {
                 fieldId: "f1",
                 value: "second row",

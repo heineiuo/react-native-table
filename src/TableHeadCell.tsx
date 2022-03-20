@@ -7,11 +7,11 @@ import { useTable } from "./TableContext";
 
 export function TableHeadCell({
   resizeable = false,
-  field,
+  column,
   index,
 }: {
   resizeable?: boolean;
-  field: any;
+  column: any;
   index: number;
 }) {
   const { rowHeight, borderColor, ColumnHeaderComponent } = useTable();
@@ -22,7 +22,7 @@ export function TableHeadCell({
         padding: 4,
       }}
     >
-      <Text>{field.title}</Text>
+      <Text>{column.title}</Text>
     </View>
   );
 
@@ -30,7 +30,7 @@ export function TableHeadCell({
     if ("type" in ColumnHeaderComponent) {
       header = ColumnHeaderComponent;
     } else {
-      header = <ColumnHeaderComponent column={field} field={field} />;
+      header = <ColumnHeaderComponent column={column} field={column} />;
     }
   }
 
@@ -46,15 +46,15 @@ export function TableHeadCell({
             height: rowHeight,
             top: 0,
             alignItems: "center",
-            width: field.widthValue,
+            width: column.widthValue,
           },
         ]}
       >
-        <ColumnReindexer field={field} index={index}>
+        <ColumnReindexer column={column} index={index}>
           {header}
         </ColumnReindexer>
       </Animated.View>
-      <ColumnResizer resizeable={resizeable} field={field} index={index} />
+      <ColumnResizer resizeable={resizeable} column={column} index={index} />
     </>
   );
 }

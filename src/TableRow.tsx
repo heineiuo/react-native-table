@@ -6,7 +6,9 @@ import { TableRowCell } from "./TableRowCell";
 
 export function TableRow({ item, index = 0 }: { item: any; index: number }) {
   const {
-    fields,
+    columns,
+    columnKeyExtractor,
+    cellsExtractor,
     rowHoverdBackgroundColor,
     rowHeight,
     borderColor,
@@ -84,18 +86,18 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
         >
           {indexCell}
         </View>
-        {fields.map((field, fieldIndex) => {
-          const data = item.fields.find(
-            (dataField) => dataField.fieldId === field.fieldId
+        {columns.map((field, fieldIndex) => {
+          const data = cellsExtractor(item).find(
+            (cell) => columnKeyExtractor(cell) === columnKeyExtractor(field)
           );
           return (
             <TableRowCell
-              field={field}
+              column={field}
               rowId={rowId}
               index={index}
               fieldIndex={fieldIndex}
               data={data ?? {}}
-              key={field.fieldId}
+              key={columnKeyExtractor(field)}
             />
           );
         })}

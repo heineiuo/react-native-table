@@ -4,18 +4,17 @@ import { StyleSheet, Animated } from "react-native";
 import { useTable } from "./TableContext";
 
 export function ColumnSeperater(
-  { field, fieldIndex },
+  { column, fieldIndex },
   { field: any, fieldIndex: number }
 ) {
   const {
     rowHeight,
-    fields,
     resizerWidth,
     borderColor,
     highlightBorderColor,
     indexCellWidth,
   } = useTable();
-  const { highlightValue } = field;
+  const { highlightValue } = column;
 
   return (
     <Animated.View

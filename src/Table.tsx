@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useMemo,
   useEffect,
-  ReactNode,
   forwardRef,
   useImperativeHandle,
   createElement,
@@ -13,23 +12,24 @@ import React, {
 } from "react";
 import { Animated, Text, View } from "react-native";
 
-import { useTable, TableContext } from "./TableContext";
+import { TableContext } from "./TableContext";
 import { TableHead } from "./TableHead";
 import { TableRow } from "./TableRow";
-import { TableInstance, TableProps, TableResizeMode } from "./TableTypes";
+import { TableInstance, TableProps } from "./TableTypes";
 import { resetColumnPosition } from "./TableUtils";
 import { TableWithFlatList } from "./TableWithFlatList";
 // import { TableWithRecyclerListView } from "./TableWithRecyclerListView";
 
 const Table = forwardRef<TableInstance, TableProps>(function Table(
   {
+    cellsExtractor = (row: any) => row.cells,
+    columnKeyExtractor = (column: any) => column.columnId,
+    keyExtractor = (item) => item.id,
     useRecyclerListView = false,
     initialColumns,
-    fields,
     resizeMode = "increase-total-width",
     style,
     data,
-    keyExtractor = (item) => item.id,
     resizeable = true,
     onValueChange,
     cellWidth = 150,
@@ -58,7 +58,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
   const tailCellLeftValue = useRef(new Animated.Value(0)).current;
   const [tableWidth, setTableWidth] = useState(0);
 
-  const [internalFields, dispatch] = useReducer(
+  const [columns, dispatch] = useReducer(
     (state, action) => {
       if (action.type === "reindex") {
         const { fromIndex, toIndex } = action.payload;
@@ -67,7 +67,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
         nextState.splice(fromIndex, 1);
         nextState.splice(toIndex, 0, target);
         return resetColumnPosition({
-          fields: nextState,
+          columns: nextState,
           indexCellWidth,
           cellWidth,
           resizerWidth,
@@ -75,14 +75,16 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
         });
       } else if (action.type === "add-field") {
         const nextState = state.slice();
-        const { fieldId } = action.payload;
-        const sameField = nextState.find((item) => item.fieldId === fieldId);
+        const fieldId = columnKeyExtractor(action.payload);
+        const sameField = nextState.find(
+          (item) => columnKeyExtractor(item) === fieldId
+        );
         if (sameField) {
           return nextState;
         }
         nextState.push(action.payload);
         return resetColumnPosition({
-          fields: nextState,
+          columns: nextState,
           indexCellWidth,
           cellWidth,
           resizerWidth,
@@ -90,16 +92,16 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
         });
       } else if (action.type === "del-field") {
         const nextState = state.slice();
-        const { fieldId } = action.payload;
+        const fieldId = columnKeyExtractor(action.payload);
         const sameFieldIndex = nextState.findIndex(
-          (item) => item.fieldId === fieldId
+          (item) => columnKeyExtractor(item) === fieldId
         );
         if (sameFieldIndex === -1) {
           return nextState;
         }
         nextState.split(sameFieldIndex, 1);
         return resetColumnPosition({
-          fields: nextState,
+          columns: nextState,
           indexCellWidth,
           cellWidth,
           resizerWidth,
@@ -109,10 +111,10 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
 
       return state;
     },
-    fields,
-    (fields) => {
+    initialColumns,
+    (initArgs) => {
       return resetColumnPosition({
-        fields,
+        columns: initArgs,
         indexCellWidth,
         cellWidth,
         resizerWidth,
@@ -172,7 +174,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
 
   const totalWidthValue = useMemo(() => {
     let totalWidthValue = new Animated.Value(indexCellWidth + tailCellWidth);
-    for (const field of internalFields) {
+    for (const field of columns) {
       totalWidthValue = Animated.add(
         totalWidthValue,
         field.widthValue
@@ -180,16 +182,18 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     }
 
     return totalWidthValue;
-  }, [internalFields, indexCellWidth, tailCellWidth]);
+  }, [columns, indexCellWidth, tailCellWidth]);
 
   const value = useMemo(() => {
     return {
+      keyExtractor,
+      cellsExtractor,
+      columnKeyExtractor,
       tailCellWidth,
       panController,
       resizerWidth,
       resizeable,
-      fields: internalFields,
-      keyExtractor,
+      columns,
       cellWidth,
       borderColor,
       highlightBorderColor,
@@ -213,6 +217,8 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       tableWidth,
     };
   }, [
+    cellsExtractor,
+    columnKeyExtractor,
     tailCellWidth,
     reIndex,
     panController,
@@ -220,7 +226,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     cellWidth,
     borderColor,
     resizerWidth,
-    internalFields,
+    columns,
     resizeable,
     keyExtractor,
     highlightBorderColor,

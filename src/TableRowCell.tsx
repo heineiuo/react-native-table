@@ -12,7 +12,7 @@ import { useTable } from "./TableContext";
 import { TableRowCellHighlight } from "./TableRowCellHighlight";
 
 export function TableRowCell({
-  field,
+  column,
   fieldIndex,
   data,
   rowId,
@@ -20,7 +20,7 @@ export function TableRowCell({
   rowId: string;
   data: any;
   resizeable?: boolean;
-  field: any;
+  column: any;
   fieldIndex: number;
   index: number;
 }) {
@@ -30,9 +30,7 @@ export function TableRowCell({
     highlightBorderColor,
     rowHeight,
     renderCell,
-    keyExtractor,
-    fields,
-    indexCellWidth,
+    columnKeyExtractor,
   } = useTable();
 
   const [isFocused, setIsFocused] = useState(false);
@@ -61,7 +59,7 @@ export function TableRowCell({
             borderBottomWidth: 1,
             height: rowHeight,
             alignItems: "center",
-            width: field.widthValue,
+            width: column.widthValue,
             /**
              * Set overflow visible to keep seperator visible
              */
@@ -78,13 +76,13 @@ export function TableRowCell({
           onPress={onPress}
         >
           {renderCell({
-            columnId: field.fieldId,
-            fieldId: field.fieldId,
+            columnId: columnKeyExtractor(column),
+            fieldId: columnKeyExtractor(column),
             rowId,
             item: data,
           })}
         </TouchableOpacity>
-        <ColumnSeperater field={field} fieldIndex={fieldIndex} />
+        <ColumnSeperater column={column} fieldIndex={fieldIndex} />
       </Animated.View>
     </>
   );

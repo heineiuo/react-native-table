@@ -8,7 +8,7 @@ export function TableHead() {
   const {
     borderColor,
     indexCellWidth,
-    fields,
+    columns,
     rowHeight,
     totalWidthValue,
     tailCellWidth,
@@ -16,6 +16,7 @@ export function TableHead() {
     tableWidth,
     HeadColumnHeaderComponent,
     TailColumnHeaderComponent,
+    columnKeyExtractor,
   } = useTable();
 
   let tailCell: ReactNode = null;
@@ -61,13 +62,13 @@ export function TableHead() {
       >
         {headCell}
       </View>
-      {fields.map((field, index) => {
+      {columns.map((field, index) => {
         return (
           <TableHeadCell
             resizeable={resizeable}
-            field={field}
+            column={field}
             index={index}
-            key={field.fieldId}
+            key={columnKeyExtractor(field)}
           />
         );
       })}

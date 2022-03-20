@@ -5,18 +5,18 @@ import { useTable } from "./TableContext";
 
 export function ColumnResizer({
   index,
-  field,
+  column,
   resizeable = false,
 }: {
   index: number;
-  field: any;
+  column: any;
   resizeable?: boolean;
 }) {
-  const { highlightValue, widthValue } = field;
+  const { highlightValue, widthValue } = column;
   const {
     rowHeight,
     panController,
-    fields,
+    columns,
     resizerWidth,
     borderColor,
     cellMinWidth,
@@ -34,7 +34,7 @@ export function ColumnResizer({
     let widthValueListenerId = null;
     let disable = false;
     const internalWidthValue = new Animated.Value(0);
-    const nextField = fields[index + 1];
+    const nextField = columns[index + 1];
 
     return PanResponder.create({
       onPanResponderTerminate: (e, gestureState) => {},
@@ -132,7 +132,8 @@ export function ColumnResizer({
   }, [
     resizeable,
     highlightValue,
-    fields,
+    columns,
+    resizeMode,
     cellMinWidth,
     index,
     panController,
@@ -146,7 +147,7 @@ export function ColumnResizer({
         {
           position: "absolute",
           top: 0,
-          left: Animated.subtract(field.rightValue, resizerWidth / 2),
+          left: Animated.subtract(column.rightValue, resizerWidth / 2),
           zIndex: 10,
           height: rowHeight,
           width: resizerWidth,

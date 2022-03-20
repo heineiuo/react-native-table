@@ -98,6 +98,8 @@ export default function App() {
       </View>
 
       <Table
+        columnKeyExtractor={(item) => item.fieldId}
+        cellsExtractor={(row) => row.fields}
         cellWidth={400}
         ref={tableRef}
         // useRecyclerListView
@@ -107,7 +109,7 @@ export default function App() {
           width: width - 40,
           height: height - 40,
         }}
-        fields={fields}
+        initialColumns={fields}
         data={data}
         IndexCellComponent={({ index }) => {
           return (
