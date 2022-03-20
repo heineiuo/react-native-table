@@ -1,6 +1,6 @@
 {
   "name": "react-native-table-plus",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "build:commonjs": "babel src --out-dir lib/commonjs --extensions '.ts,.tsx' --source-maps",
@@ -22,6 +22,21 @@
     "src",
     "lib"
   ],
+  "description": "A Table component for both react-native and react-native-web.",
+  "keywords": [
+    "react-native",
+    "react-native-table"
+  ],
+  "author": "heineiuo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heineiuo/react-native-table.git"
+  },
+  "bugs": {
+    "url": "https://github.com/heineiuo/react-native-table/issues"
+  },
+  "homepage": "https://github.com/heineiuo/react-native-table",
   "devDependencies": {
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.12.9",
