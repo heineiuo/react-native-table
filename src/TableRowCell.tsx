@@ -1,4 +1,10 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { Animated, TouchableOpacity } from "react-native";
 
 import { ColumnSeperater } from "./ColumnSeperater";
@@ -8,6 +14,7 @@ import { TableRowCellHighlight } from "./TableRowCellHighlight";
 export function TableRowCell({
   column,
   row,
+  columnId,
   columnIndex,
   rowIndex,
   data,
@@ -17,6 +24,7 @@ export function TableRowCell({
 }: {
   pressed: boolean;
   rowId: string;
+  columnId: string;
   data?: any;
   resizeable?: boolean;
   column: any;
@@ -32,11 +40,15 @@ export function TableRowCell({
     rowHeight,
     renderCell,
     columnKeyExtractor,
+    cellsMap,
   } = useTable();
 
   const [focused, setIsFocused] = useState(false);
 
   const cellRef = useRef({
+    ...data,
+    columnId,
+    rowId,
     blur() {
       setIsFocused(false);
     },
@@ -46,8 +58,12 @@ export function TableRowCell({
   });
 
   const focus = useCallback(() => {
-    focusCell({ cellRef });
-  }, [focusCell]);
+    focusCell({ rowId, columnId });
+  }, [rowId, columnId, focusCell]);
+
+  useEffect(() => {
+    cellsMap.current[`${rowId}_${columnId}`] = cellRef.current;
+  }, [focus, cellsMap, data, rowId, columnId]);
 
   return (
     <>

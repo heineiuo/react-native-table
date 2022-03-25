@@ -99,6 +99,7 @@ export function TableRow({ item, index = 0 }: { item: any; index: number }) {
                 return (
                   <TableRowCell
                     column={column}
+                    columnId={columnId}
                     rowId={rowId}
                     row={item}
                     rowIndex={index}
