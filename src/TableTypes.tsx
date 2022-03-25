@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { MutableRefObject, ReactNode } from "react";
 import { Animated, FlatListProps } from "react-native";
 
 /**
@@ -107,6 +107,7 @@ export type TableContextState = {
    */
   tableWidth: number;
   tailCellWidth: number;
+  cellsMap: MutableRefObject<Record<string, any>>;
 };
 
 export type TableProps = SupportedFlatListProps & {
@@ -211,4 +212,14 @@ export type TableProps = SupportedFlatListProps & {
 export type TableInstance = {
   addColumn: any;
   delColumn: any;
+  getColumns: () => any;
+  focusCell: (options: { rowId: string; columnId: string }) => void;
+  getFocusedCell: () => MutableRefObject<
+    Record<string, any> & {
+      focus: () => void;
+      blur: () => void;
+      rowId: string;
+      columnId: string;
+    }
+  >;
 };

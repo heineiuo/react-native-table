@@ -18,6 +18,7 @@ import { TableRow } from "./TableRow";
 import { TableInstance, TableProps } from "./TableTypes";
 import { resetColumnPosition } from "./TableUtils";
 import { TableWithFlatList } from "./TableWithFlatList";
+import { useKeyDown } from "./useKeyDown";
 // import { TableWithRecyclerListView } from "./TableWithRecyclerListView";
 
 const Table = forwardRef<TableInstance, TableProps>(function Table(
@@ -57,6 +58,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
 ) {
   const tailCellLeftValue = useRef(new Animated.Value(0)).current;
   const [tableWidth, setTableWidth] = useState(0);
+  const cellsMap = useRef<Record<string, any>>({});
 
   const [columns, dispatch] = useReducer(
     (state, action) => {
@@ -127,12 +129,17 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
   const [userSelect] = useState("none");
   const focusedCell = useRef<any>();
 
-  const focusCell = useCallback(({ cellRef }: { cellRef: RefObject<any> }) => {
+  const focusCell = useCallback((options: any) => {
     if (focusedCell.current) {
       focusedCell.current.blur();
     }
-    focusedCell.current = cellRef.current;
-    focusedCell.current.focus();
+    const { rowId, columnId } = options;
+    const next = cellsMap.current[`${rowId}_${columnId}`];
+
+    if (next) {
+      focusedCell.current = next;
+      focusedCell.current.focus();
+    }
   }, []);
 
   const reIndex = useCallback(
@@ -215,6 +222,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       tailCellLeftValue,
       resizeMode,
       tableWidth,
+      cellsMap,
     };
   }, [
     cellsExtractor,
@@ -257,17 +265,67 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       function delColumn(payload) {
         dispatch({ type: "del-field", payload });
       }
-      function getFocusedCell(payload) {}
-      function focuseCell(payload) {}
+      function getFocusedCell() {
+        return focusedCell;
+      }
+      function getColumns() {
+        return columns;
+      }
 
       return {
         getFocusedCell,
-        focuseCell,
+        focusCell,
         addColumn,
         delColumn,
+        getColumns,
       };
     },
-    []
+    [focusCell, columns]
+  );
+
+  useKeyDown(
+    ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"],
+    useCallback(
+      (event: any) => {
+        if (focusedCell.current) {
+          const { rowId, columnId } = focusedCell.current;
+          const rowIndex = data.findIndex(
+            (item) => keyExtractor(item, 0) === rowId
+          );
+          const columnIndex = columns.findIndex(
+            (item) => columnKeyExtractor(item, 0) === columnId
+          );
+          if (event.key === "ArrowUp") {
+            if (rowIndex > 0) {
+              const upRowId = keyExtractor(data[rowIndex - 1], 0);
+              focusCell({ columnId, rowId: upRowId });
+            }
+          } else if (event.key === "ArrowDown") {
+            if (rowIndex < data.length - 1) {
+              const downRowId = keyExtractor(data[rowIndex + 1], 0);
+              focusCell({ columnId, rowId: downRowId });
+            }
+          } else if (event.key === "ArrowLeft") {
+            if (columnIndex > 0) {
+              const leftColumnId = columnKeyExtractor(
+                columns[columnIndex - 1],
+                0
+              );
+              focusCell({ columnId: leftColumnId, rowId });
+            }
+          } else if (event.key === "ArrowRight") {
+            if (columnIndex < columns.length - 1) {
+              const rightColumnId = columnKeyExtractor(
+                columns[columnIndex + 1],
+                0
+              );
+              focusCell({ columnId: rightColumnId, rowId });
+            }
+          }
+        }
+      },
+      [data, focusCell, columns, columnKeyExtractor, keyExtractor]
+    )
   );
 
   useEffect(() => {
