@@ -23,6 +23,7 @@ import { useKeyDown } from "./useKeyDown";
 
 const Table = forwardRef<TableInstance, TableProps>(function Table(
   {
+    preventScrollWhenArrowMove = true,
     cellsExtractor = (row: any) => row.cells,
     columnKeyExtractor = (column: any) => column.columnId,
     keyExtractor = (item) => item.id,
@@ -193,6 +194,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
 
   const value = useMemo(() => {
     return {
+      preventScrollWhenArrowMove,
       keyExtractor,
       cellsExtractor,
       columnKeyExtractor,
@@ -225,6 +227,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       cellsMap,
     };
   }, [
+    preventScrollWhenArrowMove,
     cellsExtractor,
     columnKeyExtractor,
     tailCellWidth,
@@ -298,11 +301,17 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
           if (event.key === "ArrowUp") {
             if (rowIndex > 0) {
               const upRowId = keyExtractor(data[rowIndex - 1], 0);
+              if (preventScrollWhenArrowMove) {
+                event.preventDefault();
+              }
               focusCell({ columnId, rowId: upRowId });
             }
           } else if (event.key === "ArrowDown") {
             if (rowIndex < data.length - 1) {
               const downRowId = keyExtractor(data[rowIndex + 1], 0);
+              if (preventScrollWhenArrowMove) {
+                event.preventDefault();
+              }
               focusCell({ columnId, rowId: downRowId });
             }
           } else if (event.key === "ArrowLeft") {
@@ -311,6 +320,9 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
                 columns[columnIndex - 1],
                 0
               );
+              if (preventScrollWhenArrowMove) {
+                event.preventDefault();
+              }
               focusCell({ columnId: leftColumnId, rowId });
             }
           } else if (event.key === "ArrowRight") {
@@ -319,12 +331,22 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
                 columns[columnIndex + 1],
                 0
               );
+              if (preventScrollWhenArrowMove) {
+                event.preventDefault();
+              }
               focusCell({ columnId: rightColumnId, rowId });
             }
           }
         }
       },
-      [data, focusCell, columns, columnKeyExtractor, keyExtractor]
+      [
+        data,
+        focusCell,
+        preventScrollWhenArrowMove,
+        columns,
+        columnKeyExtractor,
+        keyExtractor,
+      ]
     )
   );
 

@@ -108,6 +108,10 @@ export type TableContextState = {
   tableWidth: number;
   tailCellWidth: number;
   cellsMap: MutableRefObject<Record<string, any>>;
+  /**
+   * 当使用方向键切换选中单元格时禁用滚动
+   */
+  preventScrollWhenArrowMove: boolean;
 };
 
 export type TableProps = SupportedFlatListProps & {
@@ -207,6 +211,11 @@ export type TableProps = SupportedFlatListProps & {
    */
   rowHoverdBackgroundColor?: string;
   useRecyclerListView?: boolean;
+
+  /**
+   * 当使用方向键切换选中单元格时禁用滚动
+   */
+  preventScrollWhenArrowMove?: boolean;
 };
 
 export type TableInstance = {

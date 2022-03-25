@@ -36,7 +36,6 @@
   "bugs": {
     "url": "https://github.com/heineiuo/react-native-table/issues"
   },
-  "homepage": "https://github.com/heineiuo/react-native-table",
   "devDependencies": {
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.12.9",
