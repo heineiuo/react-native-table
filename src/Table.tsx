@@ -59,7 +59,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
 ) {
   const tailCellLeftValue = useRef(new Animated.Value(0)).current;
   const [tableWidth, setTableWidth] = useState(0);
-  const cellsMap = useRef<Record<string, any>>({});
+  const cellsMap = useRef<Map<string, any>>(new Map());
 
   const [columns, dispatch] = useReducer(
     (state, action) => {
@@ -135,7 +135,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       focusedCell.current.blur();
     }
     const { rowId, columnId } = options;
-    const next = cellsMap.current[`${rowId}_${columnId}`];
+    const next = cellsMap.current.get(`${rowId}_${columnId}`);
 
     if (next) {
       focusedCell.current = next;

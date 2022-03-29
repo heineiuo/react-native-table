@@ -62,7 +62,7 @@ export function TableRowCell({
   }, [rowId, columnId, focusCell]);
 
   useEffect(() => {
-    cellsMap.current[`${rowId}_${columnId}`] = cellRef.current;
+    cellsMap.current.set(`${rowId}_${columnId}`, cellRef.current);
   }, [focus, cellsMap, data, rowId, columnId]);
 
   return (
