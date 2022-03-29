@@ -107,7 +107,7 @@ export type TableContextState = {
    */
   tableWidth: number;
   tailCellWidth: number;
-  cellsMap: MutableRefObject<Record<string, any>>;
+  cellsMap: MutableRefObject<Map<string, any>>;
   /**
    * 当使用方向键切换选中单元格时禁用滚动
    */
