@@ -98,6 +98,7 @@ export default function App() {
       </View>
 
       <Table
+        onChangeColumnSize={console.log}
         columnKeyExtractor={(item) => item.fieldId}
         cellsExtractor={(row) => row.fields}
         cellWidth={400}

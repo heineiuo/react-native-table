@@ -23,6 +23,7 @@ export function ColumnResizer({
     highlightBorderColor,
     resizeMode,
     indexCellWidth,
+    onChangeColumnSize,
   } = useTable();
 
   const panResponder = useMemo(() => {
@@ -31,14 +32,16 @@ export function ColumnResizer({
         panHandlers: {},
       };
     }
+    let internalWidthValueListenerId = null;
     let widthValueListenerId = null;
     let disable = false;
+    let currentWidthValue = 0;
     const internalWidthValue = new Animated.Value(0);
     const nextField = columns[index + 1];
 
     return PanResponder.create({
-      onPanResponderTerminate: (e, gestureState) => {},
-      onPanResponderTerminationRequest: (e, gestureState) => {
+      onPanResponderTerminate: (event, gestureState) => {},
+      onPanResponderTerminationRequest: (event, gestureState) => {
         return false;
       },
       onPanResponderReject: () => {},
@@ -86,13 +89,19 @@ export function ColumnResizer({
          * 否则允许调整
          */
         internalWidthValue.removeAllListeners();
+        widthValue.removeAllListeners();
 
-        widthValueListenerId = internalWidthValue.addListener(({ value }) => {
-          if (value < cellMinWidth || (maxWidth > -1 && value > maxWidth)) {
-            disable = true;
-          } else {
-            disable = false;
+        internalWidthValueListenerId = internalWidthValue.addListener(
+          ({ value }) => {
+            if (value < cellMinWidth || (maxWidth > -1 && value > maxWidth)) {
+              disable = true;
+            } else {
+              disable = false;
+            }
           }
+        );
+        widthValueListenerId = widthValue.addListener(({ value }) => {
+          currentWidthValue = value;
         });
       },
       /**
@@ -125,11 +134,14 @@ export function ColumnResizer({
         if (nextField) {
           nextField.widthValue.flattenOffset();
         }
-        internalWidthValue.removeListener(widthValueListenerId);
+        onChangeColumnSize({ width: currentWidthValue });
+        internalWidthValue.removeListener(internalWidthValueListenerId);
+        widthValue.removeListener(widthValueListenerId);
         disable = false;
       },
     });
   }, [
+    onChangeColumnSize,
     resizeable,
     highlightValue,
     columns,

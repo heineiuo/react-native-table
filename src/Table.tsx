@@ -15,7 +15,7 @@ import { Animated, Text, View } from "react-native";
 import { TableContext } from "./TableContext";
 import { TableHead } from "./TableHead";
 import { TableRow } from "./TableRow";
-import { TableInstance, TableProps } from "./TableTypes";
+import { TableContextState, TableInstance, TableProps } from "./TableTypes";
 import { resetColumnPosition } from "./TableUtils";
 import { TableWithFlatList } from "./TableWithFlatList";
 import { useKeyDown } from "./useKeyDown";
@@ -30,6 +30,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     useRecyclerListView = false,
     initialColumns,
     resizeMode = "increase-total-width",
+    onChangeColumnSize,
     style,
     data,
     resizeable = true,
@@ -192,7 +193,16 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     return totalWidthValue;
   }, [columns, indexCellWidth, tailCellWidth]);
 
-  const value = useMemo(() => {
+  const internalChangeColumnSize = useCallback(
+    (options) => {
+      if (onChangeColumnSize) {
+        onChangeColumnSize(options);
+      }
+    },
+    [onChangeColumnSize]
+  );
+
+  const value = useMemo<TableContextState>(() => {
     return {
       preventScrollWhenArrowMove,
       keyExtractor,
@@ -225,8 +235,10 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       resizeMode,
       tableWidth,
       cellsMap,
+      onChangeColumnSize: internalChangeColumnSize,
     };
   }, [
+    internalChangeColumnSize,
     preventScrollWhenArrowMove,
     cellsExtractor,
     columnKeyExtractor,
