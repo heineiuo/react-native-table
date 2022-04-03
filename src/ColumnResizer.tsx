@@ -23,8 +23,11 @@ export function ColumnResizer({
     highlightBorderColor,
     resizeMode,
     indexCellWidth,
+    columnKeyExtractor,
     onChangeColumnSize,
   } = useTable();
+
+  const columnId = columnKeyExtractor(column);
 
   const panResponder = useMemo(() => {
     if (!resizeable) {
@@ -134,13 +137,14 @@ export function ColumnResizer({
         if (nextField) {
           nextField.widthValue.flattenOffset();
         }
-        onChangeColumnSize({ width: currentWidthValue });
+        onChangeColumnSize({ width: currentWidthValue, columnId });
         internalWidthValue.removeListener(internalWidthValueListenerId);
         widthValue.removeListener(widthValueListenerId);
         disable = false;
       },
     });
   }, [
+    columnId,
     onChangeColumnSize,
     resizeable,
     highlightValue,

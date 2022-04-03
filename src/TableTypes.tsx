@@ -52,7 +52,7 @@ export type TableContextState = {
   focusCell: (options: any) => void;
   indexCellWidth: number;
   reIndex: (options: { fromIndex: number; toIndex: number }) => void;
-  onChangeColumnSize: ({ width: number }) => void;
+  onChangeColumnSize: ({ width: number, columnId: string }) => void;
   /**
    * 自定义列头
    */
@@ -141,7 +141,7 @@ export type TableProps = SupportedFlatListProps & {
   onValueChange?: any;
 
   resizeMode?: TableResizeMode;
-  onChangeColumnSize?: ({ width: number }) => void;
+  onChangeColumnSize?: ({ width: number, columnId: string }) => void;
 
   /**
    * custom cell renderer
