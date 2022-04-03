@@ -16,17 +16,10 @@ export function resetColumnPosition({
 }) {
   const nextColumns: any = [];
 
-  let prevRight = indexCellWidth;
   let currentIndex = 0;
 
   for (const field of columns) {
-    const left = prevRight;
-    const width = cellWidth;
-    prevRight += width;
-
     const result = {
-      left,
-      width,
       ...field,
     };
     if (currentIndex === 0) {
@@ -38,7 +31,7 @@ export function resetColumnPosition({
     result.highlightValue = new Animated.Value(0);
     result.widthValue = field.widthValue
       ? field.widthValue
-      : new Animated.Value(cellWidth);
+      : new Animated.Value(field.initialWidth ?? cellWidth);
 
     result.rightValue = Animated.add(result.leftValue, result.widthValue);
 

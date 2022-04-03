@@ -31,9 +31,9 @@ const sampleData = () =>
   });
 
 const sampleFields = () => [
-  { fieldId: "f1", title: "Fileds1" },
-  { fieldId: "f2", title: "Fileds2" },
-  { fieldId: "f3", title: "Fileds3" },
+  { fieldId: "f1", title: "Fileds1", initialWidth: 400 },
+  { fieldId: "f2", title: "Fileds2", initialWidth: 200 },
+  { fieldId: "f3", title: "Fileds3", initialWidth: 200 },
   { fieldId: "f4", title: "Fileds4" },
 ];
 
