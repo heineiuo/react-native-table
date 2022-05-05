@@ -30,7 +30,14 @@ export function TableHeadCell({
     if ("type" in ColumnHeaderComponent) {
       header = ColumnHeaderComponent;
     } else {
-      header = <ColumnHeaderComponent column={column} field={column} />;
+      header = (
+        <ColumnHeaderComponent
+          resizeable={resizeable}
+          columnIndex={index}
+          column={column}
+          field={column}
+        />
+      );
     }
   }
 

@@ -3,8 +3,6 @@ name: CI
 on:
   pull_request:
   push:
-    tags:
-      - "v*"
     branches:
       - main
 
@@ -26,17 +24,44 @@ jobs:
           path: |
             **/node_modules
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          cache: npm
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.x
+          cache: npm
+
+      - name: 🏗 Setup Expo
+        uses: expo/expo-github-action@v7
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Echo Infomation
         run: |
           echo "event name: ${{github.event_name}}"
           echo "event action: ${{github.event.action}}"
           echo "event number: ${{github.event.number}}"
+
+      - name: Get semver
+        id: semver
+        uses: heineiuo/get-commit-semver@v1.6.0
+    
+      - name: Create Tag
+        if: |
+          github.event_name == 'push' && steps.semver.outputs.valid == 'true'
+        uses: negz/create-tag@v1
+        with:
+          version: ${{ steps.semver.outputs.raw }}
+          message: ${{ steps.semver.outputs.raw }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Changelogs
+        if: |
+          github.event_name == 'push' && steps.semver.outputs.valid == 'true'
+        id: changelog
+        uses: heineiuo/create-changelogs@master
 
       - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
@@ -50,31 +75,35 @@ jobs:
           npm run build:commonjs
           npm run build:module
           npm run build:typescript
+          npm run build:web
         env:
           CI: true
 
-      - name: Create Changelogs
-        if: |
-          github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        id: changelog
-        uses: heineiuo/create-changelogs@master
-
       - name: Publish to NPM
         if: |
-          github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+          github.event_name == 'push' && steps.semver.outputs.valid == 'true'
         run: |
           echo '//registry.npmjs.org/:_authToken=${{secrets.NPM_TOKEN}}' > ~/.npmrc
           npm publish
 
+      - name: 🚀 Deploy
+        if: |
+          github.event_name == 'push'
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: web-build # The folder the action should deploy.
+
       - name: Create Github Release
         if: |
-          github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+          github.event_name == 'push' && steps.semver.outputs.valid == 'true'
         id: create_release
         uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          tag: ${{ steps.semver.outputs.raw }}
           draft: false
           body: ${{ steps.changelog.outputs.changelogs }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: ${{ steps.changelog.outputs.release_type == 'prerelease' }}
+          prerelease: ${{ steps.semver.outputs.is_prerelease == 'true' }}

@@ -12,8 +12,14 @@ export function ColumnReindexer({
   index: number;
   children: ReactNode;
 }) {
-  const { columns, rowHeight, panController, reIndex, columnKeyExtractor } =
-    useTable();
+  const {
+    debug,
+    columns,
+    rowHeight,
+    panController,
+    reIndex,
+    columnKeyExtractor,
+  } = useTable();
   const { widthValue, leftValue } = column;
   const opacityValue = useRef(new Animated.Value(1)).current;
   const startPosition = useRef(0);
@@ -31,10 +37,15 @@ export function ColumnReindexer({
       onPanResponderGrant: (event, gestureState) => {
         opacityValue.setValue(0.4);
         const left = JSON.parse(JSON.stringify(leftValue));
-        // console.log("[reindex] grant: ", left, event.nativeEvent.locationX);
+        if (debug) {
+          console.log("[reindex] grant: ", left, event.nativeEvent.locationX);
+        }
         startPosition.current = left + event.nativeEvent.locationX;
       },
       onPanResponderMove: (event, gestureState) => {
+        if (debug) {
+          console.log("onPanResponderMove", event);
+        }
         const currentX = startPosition.current + gestureState.dx;
 
         let highlightField = null;
@@ -53,6 +64,9 @@ export function ColumnReindexer({
         }
       },
       onPanResponderRelease: (event, gestureState) => {
+        if (debug) {
+          console.log("onPanResponderRelease", event);
+        }
         opacityValue.setValue(1);
         panController.current = null;
 
@@ -80,15 +94,20 @@ export function ColumnReindexer({
             if (index < highlightIndex) {
               toIndex--;
             }
-            // console.log(`[reindex] fromIndex ${index} toIndex ${toIndex}`);
+            if (debug) {
+              console.log(`[reindex] fromIndex ${index} toIndex ${toIndex}`);
+            }
             reIndex({ fromIndex: index, toIndex });
           }
         } else {
-          // console.log("[reindex] not change, release at wrong position");
+          if (debug) {
+            console.log("[reindex] not change, release at wrong position");
+          }
         }
       },
     });
   }, [
+    debug,
     columns,
     panController,
     columnKey,

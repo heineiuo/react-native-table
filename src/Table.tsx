@@ -1,14 +1,12 @@
 import React, {
   useRef,
   useState,
-  useReducer,
   useCallback,
   useMemo,
   useEffect,
   forwardRef,
   useImperativeHandle,
   createElement,
-  RefObject,
 } from "react";
 import { Animated, Text, View } from "react-native";
 
@@ -23,18 +21,17 @@ import { useKeyDown } from "./useKeyDown";
 
 const Table = forwardRef<TableInstance, TableProps>(function Table(
   {
+    debug = false,
     preventScrollWhenArrowMove = true,
     cellsExtractor = (row: any) => row.cells,
     columnKeyExtractor = (column: any) => column.columnId,
     keyExtractor = (item) => item.id,
     useRecyclerListView = false,
-    initialColumns,
+    columns,
     resizeMode = "increase-total-width",
-    onChangeColumnSize,
     style,
     data,
     resizeable = true,
-    onValueChange,
     cellWidth = 150,
     resizerWidth = 24,
     borderColor = "#d8dee4",
@@ -52,6 +49,9 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     FooterIndexCellComponent,
     FooterCellComponent,
     renderCell,
+    onChangeColumnSize,
+    onChangeColumns,
+    onValueChange,
     onEndReached,
     onEndReachedThreshold,
     onLayout,
@@ -62,70 +62,38 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
   const [tableWidth, setTableWidth] = useState(0);
   const cellsMap = useRef<Map<string, any>>(new Map());
 
-  const [columns, dispatch] = useReducer(
-    (state, action) => {
-      if (action.type === "reindex") {
-        const { fromIndex, toIndex } = action.payload;
-        const nextState = state.slice();
-        const target = nextState[fromIndex];
-        nextState.splice(fromIndex, 1);
-        nextState.splice(toIndex, 0, target);
-        return resetColumnPosition({
-          columns: nextState,
-          indexCellWidth,
-          cellWidth,
-          resizerWidth,
-          tailCellWidth,
-        });
-      } else if (action.type === "add-field") {
-        const nextState = state.slice();
-        const fieldId = columnKeyExtractor(action.payload);
-        const sameField = nextState.find(
-          (item) => columnKeyExtractor(item) === fieldId
-        );
-        if (sameField) {
-          return nextState;
-        }
-        nextState.push(action.payload);
-        return resetColumnPosition({
-          columns: nextState,
-          indexCellWidth,
-          cellWidth,
-          resizerWidth,
-          tailCellWidth,
-        });
-      } else if (action.type === "del-field") {
-        const nextState = state.slice();
-        const fieldId = columnKeyExtractor(action.payload);
-        const sameFieldIndex = nextState.findIndex(
-          (item) => columnKeyExtractor(item) === fieldId
-        );
-        if (sameFieldIndex === -1) {
-          return nextState;
-        }
-        nextState.split(sameFieldIndex, 1);
-        return resetColumnPosition({
-          columns: nextState,
-          indexCellWidth,
-          cellWidth,
-          resizerWidth,
-          tailCellWidth,
-        });
-      }
+  /**
+   * 内部记录columnd的widthValue
+   */
+  const columnsWidth = useRef<any>({});
 
-      return state;
-    },
-    initialColumns,
-    (initArgs) => {
-      return resetColumnPosition({
-        columns: initArgs,
-        indexCellWidth,
-        cellWidth,
-        resizerWidth,
-        tailCellWidth,
-      });
+  /**
+   * 内部使用的column, 在props.columns的基础上
+   * 添加leftValue, widthValue, rightValue
+   */
+  const internalColumns = useMemo(() => {
+    const nextColumns = resetColumnPosition({
+      columnsWidth: columnsWidth.current,
+      columns,
+      indexCellWidth,
+      cellWidth,
+      resizerWidth,
+      tailCellWidth,
+    });
+    const nextColumnsWidth = {};
+    for (const column of nextColumns) {
+      nextColumnsWidth[columnKeyExtractor(column)] = column.widthValue;
     }
-  );
+    columnsWidth.current = nextColumnsWidth;
+    return nextColumns;
+  }, [
+    columns,
+    indexCellWidth,
+    columnKeyExtractor,
+    cellWidth,
+    resizerWidth,
+    tailCellWidth,
+  ]);
 
   const panController = useRef({}).current;
   const [userSelect] = useState("none");
@@ -146,9 +114,14 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
 
   const reIndex = useCallback(
     (payload: { fromIndex: number; toIndex: number }) => {
-      dispatch({ type: "reindex", payload });
+      const { fromIndex, toIndex } = payload;
+      const nextState = columns.slice();
+      const target = nextState[fromIndex];
+      nextState.splice(fromIndex, 1);
+      nextState.splice(toIndex, 0, target);
+      return onChangeColumns(nextState);
     },
-    []
+    [columns, onChangeColumns]
   );
 
   const internalRenderCell = useCallback(
@@ -173,7 +146,6 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     (e) => {
       const tableWidth = e.nativeEvent.layout.width;
       setTableWidth(tableWidth);
-      dispatch({ type: "update-width", payload: { tableWidth } });
       if (onLayout) {
         onLayout(e);
       }
@@ -183,7 +155,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
 
   const totalWidthValue = useMemo(() => {
     let totalWidthValue = new Animated.Value(indexCellWidth + tailCellWidth);
-    for (const field of columns) {
+    for (const field of internalColumns) {
       totalWidthValue = Animated.add(
         totalWidthValue,
         field.widthValue
@@ -191,7 +163,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     }
 
     return totalWidthValue;
-  }, [columns, indexCellWidth, tailCellWidth]);
+  }, [internalColumns, indexCellWidth, tailCellWidth]);
 
   const internalChangeColumnSize = useCallback(
     (options) => {
@@ -204,6 +176,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
 
   const value = useMemo<TableContextState>(() => {
     return {
+      debug,
       preventScrollWhenArrowMove,
       keyExtractor,
       cellsExtractor,
@@ -212,7 +185,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       panController,
       resizerWidth,
       resizeable,
-      columns,
+      columns: internalColumns,
       cellWidth,
       borderColor,
       highlightBorderColor,
@@ -238,6 +211,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       onChangeColumnSize: internalChangeColumnSize,
     };
   }, [
+    debug,
     internalChangeColumnSize,
     preventScrollWhenArrowMove,
     cellsExtractor,
@@ -249,7 +223,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     cellWidth,
     borderColor,
     resizerWidth,
-    columns,
+    internalColumns,
     resizeable,
     keyExtractor,
     highlightBorderColor,
@@ -274,12 +248,6 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
   useImperativeHandle(
     ref,
     () => {
-      function addColumn(payload) {
-        dispatch({ type: "add-field", payload });
-      }
-      function delColumn(payload) {
-        dispatch({ type: "del-field", payload });
-      }
       function getFocusedCell() {
         return focusedCell;
       }
@@ -290,8 +258,6 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       return {
         getFocusedCell,
         focusCell,
-        addColumn,
-        delColumn,
         getColumns,
       };
     },

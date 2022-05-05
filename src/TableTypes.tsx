@@ -33,6 +33,7 @@ export type SupportedFlatListProps = Omit<
 >;
 
 export type TableContextState = {
+  debug: boolean;
   panController: any;
   resizerWidth: number;
   resizeable: boolean;
@@ -116,6 +117,7 @@ export type TableContextState = {
 };
 
 export type TableProps = SupportedFlatListProps & {
+  debug?: boolean;
   /**
    * 行高
    */
@@ -202,7 +204,8 @@ export type TableProps = SupportedFlatListProps & {
    */
   highlightBorderColor?: string;
 
-  initialColumns?: any[];
+  columns: any[];
+  onChangeColumns: (columns: any) => void;
   /**
    * 序号单元格宽度
    */
@@ -221,8 +224,6 @@ export type TableProps = SupportedFlatListProps & {
 };
 
 export type TableInstance = {
-  addColumn: any;
-  delColumn: any;
   getColumns: () => any;
   focusCell: (options: { rowId: string; columnId: string }) => void;
   getFocusedCell: () => MutableRefObject<

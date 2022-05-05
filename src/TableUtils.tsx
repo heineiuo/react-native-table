@@ -5,14 +5,18 @@ import { Animated } from "react-native";
  */
 export function resetColumnPosition({
   columns,
+  columnsWidth = {},
   indexCellWidth,
   cellWidth,
+  keyExtractor = (column) => column.id,
 }: {
   columns: any[];
+  columnsWidth?: Record<string, Animated.AnimatedValue>;
   indexCellWidth: number;
   tailCellWidth: number;
   cellWidth: number;
   resizerWidth: number;
+  keyExtractor?: (column: any) => string;
 }) {
   const nextColumns: any = [];
 
@@ -29,8 +33,10 @@ export function resetColumnPosition({
     }
 
     result.highlightValue = new Animated.Value(0);
-    result.widthValue = field.widthValue
-      ? field.widthValue
+    const columnKey = keyExtractor(field);
+
+    result.widthValue = columnsWidth[columnKey]
+      ? columnsWidth[columnKey]
       : new Animated.Value(field.initialWidth ?? cellWidth);
 
     result.rightValue = Animated.add(result.leftValue, result.widthValue);

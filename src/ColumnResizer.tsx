@@ -14,6 +14,7 @@ export function ColumnResizer({
 }) {
   const { highlightValue, widthValue } = column;
   const {
+    debug,
     rowHeight,
     panController,
     columns,
@@ -43,17 +44,36 @@ export function ColumnResizer({
     const nextField = columns[index + 1];
 
     return PanResponder.create({
-      onPanResponderTerminate: (event, gestureState) => {},
+      onPanResponderTerminate: (event, gestureState) => {
+        if (debug) {
+          console.log("onPanResponderTerminate", event);
+        }
+      },
       onPanResponderTerminationRequest: (event, gestureState) => {
+        if (debug) {
+          console.log("onPanResponderTerminationRequest", event);
+        }
         return false;
       },
-      onPanResponderReject: () => {},
+      onPanResponderReject: (event) => {
+        if (debug) {
+          console.log("onPanResponderReject", event);
+        }
+      },
 
       /**
        * 为了不和位置调整冲突，在context里记录当前的stateID，
        * 当stateID一致时返回true，否则返回false
        */
       onMoveShouldSetPanResponder: (event, gestureState) => {
+        if (debug) {
+          console.log(
+            "onMoveShouldSetPanResponder",
+            event,
+            panController.current,
+            gestureState.stateID
+          );
+        }
         if (!panController.current) {
           panController.current = gestureState.stateID;
           return true;
@@ -66,6 +86,9 @@ export function ColumnResizer({
        * 2. 计算最大宽度
        */
       onPanResponderGrant: () => {
+        if (debug) {
+          console.log("onPanResponderGrant");
+        }
         disable = false;
         highlightValue.setValue(1);
         const currentWidth = JSON.parse(JSON.stringify(widthValue));
@@ -114,7 +137,9 @@ export function ColumnResizer({
        *
        */
       onPanResponderMove: (event, gestureState) => {
-        // console.log('resizer onPanResponderMove', panController.current);
+        if (debug) {
+          console.log("resizer onPanResponderMove", panController.current);
+        }
         internalWidthValue.setValue(gestureState.dx);
         if (disable) {
           return;
@@ -129,6 +154,9 @@ export function ColumnResizer({
        * 松开手势时flattenOffset
        */
       onPanResponderRelease: () => {
+        if (debug) {
+          console.log("onPanResponderRelease");
+        }
         highlightValue.setValue(0);
         widthValue.flattenOffset();
         internalWidthValue.flattenOffset();
@@ -144,6 +172,7 @@ export function ColumnResizer({
       },
     });
   }, [
+    debug,
     columnId,
     onChangeColumnSize,
     resizeable,
