@@ -53,7 +53,7 @@ export type TableContextState = {
   focusCell: (options: any) => void;
   indexCellWidth: number;
   reIndex: (options: { fromIndex: number; toIndex: number }) => void;
-  onChangeColumnSize: ({ width: number, columnId: string }) => void;
+  onChangeColumnSize: (props: { width: number; columnId: string }) => void;
   /**
    * 自定义列头
    */
@@ -143,7 +143,7 @@ export type TableProps = SupportedFlatListProps & {
   onValueChange?: any;
 
   resizeMode?: TableResizeMode;
-  onChangeColumnSize?: ({ width: number, columnId: string }) => void;
+  onChangeColumnSize?: (props: { width: number; columnId: string }) => void;
 
   /**
    * custom cell renderer
@@ -224,7 +224,8 @@ export type TableProps = SupportedFlatListProps & {
 };
 
 export type TableInstance = {
-  getColumns: () => any;
+  addColumn: (column: any) => void;
+  getColumns: () => any[];
   focusCell: (options: { rowId: string; columnId: string }) => void;
   getFocusedCell: () => MutableRefObject<
     Record<string, any> & {
