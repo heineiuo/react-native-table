@@ -18,7 +18,7 @@ export function resetColumnPosition({
   resizerWidth: number;
   keyExtractor?: (column: any) => string;
 }) {
-  const nextColumns: any = [];
+  const nextColumns: any[] = [];
 
   let currentIndex = 0;
 
