@@ -26,8 +26,9 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
     cellsExtractor = (row: any) => row.cells,
     columnKeyExtractor = (column: any) => column.columnId,
     keyExtractor = (item) => item.id,
+    // ? should remove this value?
     useRecyclerListView = false,
-    columns,
+    columns: initialColumns,
     resizeMode = "increase-total-width",
     style,
     data,
@@ -60,6 +61,7 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
 ) {
   const tailCellLeftValue = useRef(new Animated.Value(0)).current;
   const [tableWidth, setTableWidth] = useState(0);
+  const [columns, setColumns] = useState<typeof initialColumns>(initialColumns);
   const cellsMap = useRef<Map<string, any>>(new Map());
 
   /**
@@ -254,11 +256,15 @@ const Table = forwardRef<TableInstance, TableProps>(function Table(
       function getColumns() {
         return columns;
       }
+      function addColumn(column) {
+        setColumns((columns) => [...columns, column]);
+      }
 
       return {
         getFocusedCell,
         focusCell,
         getColumns,
+        addColumn,
       };
     },
     [focusCell, columns]
