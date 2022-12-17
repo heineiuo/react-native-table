@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   Platform,
@@ -30,7 +24,7 @@ const sampleData = () =>
     };
   });
 
-const sampleFields = () => [
+const sampleFields = [
   { fieldId: "f1", title: "Fileds1", initialWidth: 400 },
   { fieldId: "f2", title: "Fileds2", initialWidth: 200 },
   { fieldId: "f3", title: "Fileds3", initialWidth: 200 },
@@ -39,8 +33,6 @@ const sampleFields = () => [
 
 export default function App() {
   const { height, width } = useWindowDimensions();
-  const [fields, setFields] = useState(sampleFields);
-  const [data, setData] = useState(sampleData);
   const tableRef = useRef<TableInstance>();
 
   const val1 = useRef(new Animated.Value(100));
@@ -56,11 +48,12 @@ export default function App() {
   }, []);
 
   const addColumn = useCallback(() => {
+    const currentLength = tableRef.current.getColumns().length;
     tableRef.current.addColumn({
-      fieldId: `f${fields.length + 1}`,
-      title: `Fileds${fields.length + 1}`,
+      fieldId: `f${currentLength + 1}`,
+      title: `Fileds${currentLength + 1}`,
     });
-  }, [fields]);
+  }, []);
 
   const onEndReached = useCallback(() => {
     console.log("onEndReached");
@@ -83,6 +76,7 @@ export default function App() {
         useNativeDriver: false,
       }).start();
     }, 2000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -110,8 +104,8 @@ export default function App() {
           width: width - 40,
           height: height - 40,
         }}
-        initialColumns={fields}
-        data={data}
+        columns={sampleFields}
+        data={sampleData()}
         IndexCellComponent={({ index }) => {
           return (
             <View>
@@ -178,7 +172,7 @@ export default function App() {
                 padding: 4,
               }}
             >
-              <Text style={{ color: "blue" }}>{item.value}</Text>
+              <Text style={{ color: "blue" }}>{item ? item.value : ""}</Text>
               <TouchableOpacity
                 onPress={(e) => {
                   e.preventDefault();
@@ -201,6 +195,9 @@ export default function App() {
           );
         }}
         onEndReached={onEndReached}
+        onChangeColumns={(columns) => {
+          console.log(columns);
+        }}
       />
     </SafeAreaView>
   );
