@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode } from "react";
 import { View, Animated } from "react-native";
 
 import { useTable } from "./TableContext";
