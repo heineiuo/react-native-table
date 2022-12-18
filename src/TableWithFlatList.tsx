@@ -53,8 +53,8 @@ export function TableWithFlatList({
       maxToRenderPerBatch={1}
       disableVirtualization={false}
       stickyHeaderIndices={[0]}
-      ListHeaderComponent={TableHead}
-      ListFooterComponent={TableFooter}
+      ListHeaderComponent={React.memo(TableHead)}
+      ListFooterComponent={React.memo(TableFooter)}
       ListEmptyComponent={ListEmptyComponent}
       keyExtractor={keyExtractor}
       data={data}
